@@ -15,6 +15,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     private int oldHealth;
     public int deathScore = 25;
     public int enemyDamage = 5;
+    public bool isPatroling = false;
+    public List<GameObject> playersInReach = new List<GameObject>();
+    public bool attacks = false;
 
     void Awake()
     {
@@ -34,5 +37,24 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     void selfDestruct()
     {
         dead = true;
+    }
+
+    public void AttackAnimationEnds()
+    {
+        attacks = false;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+            playersInReach.Add(other.gameObject);
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            playersInReach.Remove(other.gameObject);
+        }
     }
 }

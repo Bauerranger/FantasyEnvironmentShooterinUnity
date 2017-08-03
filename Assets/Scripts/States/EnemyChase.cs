@@ -18,6 +18,8 @@ public class EnemyChase : IFSMState<EnemyController>
     {
         maximumChasingDistance = e.maximumDistance;
         agent = e.GetComponent<NavMeshAgent>();
+        agent.stoppingDistance = e.maximumAttackDistance;
+        Debug.Log("started chasing");
     }
 
     public void Exit(EnemyController e)
@@ -29,24 +31,20 @@ public class EnemyChase : IFSMState<EnemyController>
     {
 
         agent.destination = chasedPlayer.transform.position;
-        RaycastHit hit;
 
-        if (Physics.Raycast(e.transform.position, chasedPlayer.transform.position - e.transform.position, out hit, maximumChasingDistance))
+        if (e.playersInReach.Count == 0)
         {
-            if (hit.transform.tag != "Player")
-            {
-                string state = ("EnemyPatrol");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
-            }
+            string state = ("EnemyPatrol");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
-        if (Physics.Raycast(e.transform.position, chasedPlayer.transform.position - e.transform.position, out hit, e.maximumAttackDistance))
+
+        if (agent.remainingDistance <= e.maximumAttackDistance + 0.1f)
         {
-            if (hit.transform.tag == "Player")
-            {
-                string state = ("EnemyAttack");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
-            }
+            string state = ("EnemyAttack");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
+
+
         if (e.Health <= 0)
         {
             string state = ("EnemyDead");

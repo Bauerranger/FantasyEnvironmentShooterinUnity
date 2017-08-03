@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class EnemyPatrol : IFSMState<EnemyController>
 {
     private NavMeshAgent agent;
-    private List<GameObject> players = new List<GameObject>();
     static readonly EnemyPatrol instance = new EnemyPatrol();
     private int seeingDistance;
     public static EnemyPatrol Instance
@@ -16,48 +15,40 @@ public class EnemyPatrol : IFSMState<EnemyController>
 
     public void Enter(EnemyController e)
     {
+        e.isPatroling = true;
         agent = e.GetComponent<NavMeshAgent>();
         seeingDistance = e.seeingDistance;
+        agent.stoppingDistance = 0;
+        agent.destination = e.currentWaypoint.position;
     }
 
     public void Exit(EnemyController e)
     {
+        e.isPatroling = false;
         Debug.Log("stopped patrolling");
     }
 
     public void Reason(EnemyController e)
     {
-        if (players.Count != GameObject.FindGameObjectsWithTag("Player").Length)
+        if (e.playersInReach.Count > 0) //if for null did not work
         {
-            players.Clear();
-            players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+            string state = ("EnemyChase");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.playersInReach[0]);
         }
-        RaycastHit hit;
-        foreach (GameObject player in players)
-        {
-            if (Physics.Raycast(e.transform.position, (player.transform.position + new Vector3(0,1,0)) - e.transform.position, out hit, seeingDistance))
-            {
-                if (hit.transform.tag == "Player")
-                {
-                    Debug.DrawRay(e.transform.position, player.transform.position - e.transform.position, Color.red);
-                    string state = ("EnemyChase");
-                    e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, player);
-                }
-                else
-                {
-                    Debug.DrawRay(e.transform.position, player.transform.position - e.transform.position, Color.green);
-                }
-            }
-        }
+        
         if (e.Health <= 0)
         {
             string state = ("EnemyDead");
-            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, players[0]);
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
         }
     }
 
     public void Update(EnemyController e)
     {
+        if (agent.remainingDistance < 0.5f)
+        {
+            e.currentWaypoint.GetComponent<wayPointGiver>().giveWayPoint(e);
+        }
         if (e.currentWaypoint != null && e.currentWaypoint.position != agent.destination)
             agent.destination = e.currentWaypoint.position;
     }

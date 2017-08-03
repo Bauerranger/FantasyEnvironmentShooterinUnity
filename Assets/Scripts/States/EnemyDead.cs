@@ -20,6 +20,7 @@ public class EnemyDead : IFSMState<EnemyController>
         animator = e.GetComponent<Animator>();
         agent = e.GetComponent<NavMeshAgent>();
         agent.enabled = false;
+        Debug.Log("started Dying");
     }
 
     public void Exit(EnemyController e)

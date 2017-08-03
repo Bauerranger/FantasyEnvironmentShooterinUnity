@@ -11,7 +11,6 @@ public class EnemyAttack : IFSMState<EnemyController>
     }
     private GameObject attackedPlayer;
     private int enemyDamage;
-    private bool attacks = false;
     private Transform destination;
     private NavMeshAgent agent;
     static readonly EnemyPatrol instance = new EnemyPatrol();
@@ -23,23 +22,27 @@ public class EnemyAttack : IFSMState<EnemyController>
     public void Enter(EnemyController e)
     {
         enemyDamage = e.enemyDamage;
+        agent = e.GetComponent<NavMeshAgent>();
+        Debug.Log("started attack");
     }
 
     public void Exit(EnemyController e)
     {
+        agent.stoppingDistance = 0;
+        agent.SetDestination(attackedPlayer.transform.position);
+        Debug.Log("stopped attack");
     }
 
     public void Reason(EnemyController e)
     {
-        RaycastHit hit;
-        if (Physics.Raycast(e.transform.position, attackedPlayer.transform.position - e.transform.position, out hit, e.maximumAttackDistance))
+        agent.destination = attackedPlayer.transform.position;
+
+        if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach == null)
         {
-            if (hit.transform.tag != "Player")
-            {
-                string state = ("EnemyPatrol");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
-            }
+            string state = ("EnemyChase");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
         }
+
         if (e.Health <= 0)
         {
             string state = ("EnemyDead");
@@ -49,10 +52,10 @@ public class EnemyAttack : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        if (!attacks)
+        if (!e.attacks)
         {
             e.GetComponent<EnemyAnimationManager>().playAttackAnimation();
-            attacks = true;
+            e.attacks = true;
         }
         else
         {
@@ -60,10 +63,7 @@ public class EnemyAttack : IFSMState<EnemyController>
         }
     }
 
-    public void AttackAnimationEnds()
-    {
-        attacks = false;
-    }
+
 
     public void DoDamage()
     {
