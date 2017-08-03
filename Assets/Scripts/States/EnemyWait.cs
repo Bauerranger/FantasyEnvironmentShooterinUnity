@@ -54,7 +54,7 @@ public class EnemyWait : IFSMState<EnemyController>
                 }
             }
 
-            if (e.Health <= 0)
+            if (e.health <= 0)
             {
                 string state = ("EnemyDead");
                 e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, players[0]);

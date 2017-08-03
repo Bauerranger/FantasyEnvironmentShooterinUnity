@@ -21,11 +21,14 @@ public class EnemyDead : IFSMState<EnemyController>
         agent = e.GetComponent<NavMeshAgent>();
         agent.enabled = false;
         Debug.Log("started Dying");
+        e.GetComponent<Collider>().enabled = false;
     }
 
     public void Exit(EnemyController e)
     {
         Debug.Log("stopped being Dead 'Doh'");
+        agent.enabled = false;
+        e.GetComponent<Collider>().enabled = true;
     }
 
     public void Reason(EnemyController e)

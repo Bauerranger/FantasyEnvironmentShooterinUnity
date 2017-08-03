@@ -7,7 +7,6 @@ public class NetworkPlayerController : NetworkBehaviour
 {
     public bool dies = false;
     private bool isDead = false;
-    public int health;
     private int playerNumber;
     public string playerName;
     [SerializeField]
@@ -40,7 +39,6 @@ public class NetworkPlayerController : NetworkBehaviour
     private string[] animationNames = new string[3] { "Run", "Jump", "Melee Attack" };
     private GameObject menuCanvas;
     public bool inputIsActive { get; set; }
-    private int playerHealth = 100;
 
     void Awake()
     {
@@ -53,7 +51,7 @@ public class NetworkPlayerController : NetworkBehaviour
 
         if (!isLocalPlayer)
         {
-            Destroy(this);
+            return;
         }
         GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerTwo>().countPlayers++;
         playerNumber = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerTwo>().countPlayers;
@@ -62,9 +60,9 @@ public class NetworkPlayerController : NetworkBehaviour
         cameraMover.transform.position = new Vector3(characterRigidbody.transform.position.x + cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         cameraMover.transform.rotation = Quaternion.Euler(cameraAngle);
         Cursor.visible = false;
-        EventManager.movementMethods += cameraMovement;
-        EventManager.movementMethods += rotator;
-        EventManager.movementMethods += shotPointer;
+        EventManager.movementMethods += CameraMovement;
+        EventManager.movementMethods += Rotator;
+        EventManager.movementMethods += ShotPointer;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
         EventManager.menuMethods += menuCanvas.GetComponent<OptionsBehavior>().turnOffMenu;
@@ -74,62 +72,71 @@ public class NetworkPlayerController : NetworkBehaviour
 
     void Update()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         if (inputIsActive && !isDead)
-            fetchInput();
-        updateMethods();
-        if (dies && !isDead)
-            EventManager.Die();
+            FetchInput();
+        UpdateMethods();
     }
 
     private void FixedUpdate()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         EventManager.Movement();
-        EventManager.attack();
+        EventManager.Attack();
         EventManager.Menu();
-        moveStop();
+        EventManager.ObservePlayerStatus();
+        if (dies && !isDead)
+            EventManager.Die();
+        MoveStop();
     }
 
-    void updateMethods()
+    void UpdateMethods()
     {
         if (walksLeft && !walksRight)
         {
-            EventManager.movementMethods += CmdMoveLeft;
+            EventManager.movementMethods += Cmd_MoveLeft;
         }
 
         if (walksRight && !walksLeft)
         {
-            EventManager.movementMethods += CmdMoveRight;
+            EventManager.movementMethods += Cmd_MoveRight;
         }
 
         if (startJump && !jumps)
         {
-            EventManager.movementMethods += CmdMoveJump;
+            EventManager.movementMethods += Cmd_MoveJump;
         }
 
         if (attacks && attackAnimationIsDone)
         {
-            EventManager.attackMethods += attack;
+            EventManager.attackMethods += Cmd_Attack;
         }
         if (!attacks)
         {
-            EventManager.attackMethods -= attack;
+            EventManager.attackMethods -= Cmd_Attack;
         }
         if (!walksRight)
         {
-            EventManager.movementMethods -= CmdMoveRight;
+            EventManager.movementMethods -= Cmd_MoveRight;
         }
         if (!walksLeft)
         {
-            EventManager.movementMethods -= CmdMoveLeft;
+            EventManager.movementMethods -= Cmd_MoveLeft;
         }
 
         if (jumps)
         {
-            EventManager.movementMethods -= CmdMoveJump;
+            EventManager.movementMethods -= Cmd_MoveJump;
         }
     }
 
-    void fetchInput()
+    void FetchInput()
     {
 
         if (Input.GetKey(moveRightKey) && !walksLeft && !jumps)
@@ -173,17 +180,17 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
-    void openMenu()
+    void OpenMenu()
     {
         menuCanvas.GetComponent<OptionsBehavior>().openMenu();
     }
 
-    void closeMenu()
+    void CloseMenu()
     {
         menuCanvas.GetComponent<OptionsBehavior>().closeMenu();
     }
 
-    void cameraMovement()
+    void CameraMovement()
     {
         Vector3 cameraOffsetNeutral = new Vector3(characterRigidbody.transform.position.x, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         Vector3 cameraOffsetPos = new Vector3(characterRigidbody.transform.position.x + cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
@@ -200,7 +207,8 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
-    void attack()
+    [Command]
+    void Cmd_Attack()
     {
         if (attackAnimationIsDone)
         {
@@ -209,7 +217,7 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
-    void shotPointer()
+    void ShotPointer()
     {
         Plane playerPlane = new Plane(transform.right, ShotStartingPoint.position);
         float outEnterPoint = 0.0f;
@@ -229,48 +237,48 @@ public class NetworkPlayerController : NetworkBehaviour
         ShotTargetPoint.position = ShotStartingPoint.position + towardsMouse * cursorDistance;
     }
 
-    public void spawnShot()
+    public void SpawnShot()
     {
-        EventManager.shoot();
+        EventManager.Shoot();
     }
 
-    public void animationEnds()
+    public void AnimationEnds()
     {
         attackAnimationIsDone = true;
     }
 
     [Command]
-    void CmdMoveRight()
+    void Cmd_MoveRight()
     {
         Vector3 speed = new Vector3(addVelocity, characterRigidbody.velocity.y, 0);
-        mover(speed);
+        Mover(speed);
         if (!jumps && runs)
             animator.SetBool("Run", true);
     }
 
 
     [Command]
-    void CmdMoveLeft()
+    void Cmd_MoveLeft()
     {
         Vector3 speed = new Vector3(-addVelocity, characterRigidbody.velocity.y, 0);
-        mover(speed);
+        Mover(speed);
         if (!jumps && runs)
             animator.SetBool("Run", true);
     }
 
     [Command]
-    void CmdMoveJump()
+    void Cmd_MoveJump()
     {
         if (!jumps)
         {
             animator.SetTrigger("Jump");
             jumps = true;
             Vector3 speed = new Vector3(0, jumpHight, 0);
-            mover(speed);
+            Mover(speed);
         }
     }
 
-    void moveStop()
+    void MoveStop()
     {
         if (!jumps && !runs)
         {
@@ -283,12 +291,12 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
-    void mover(Vector3 speed)
+    void Mover(Vector3 speed)
     {
         characterRigidbody.velocity = speed;
     }
 
-    void rotator()
+    void Rotator()
     {
         Quaternion rotation;
         if (walksLeft && !walksRight)
@@ -306,12 +314,7 @@ public class NetworkPlayerController : NetworkBehaviour
         characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, rotation, 0.1f);
     }
 
-    public void ReceiveDamage(int damage)
-    {
-        playerHealth -= damage;
-    }
-
-    public void ProxyCommandDie()// die tut nichts!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    public void ProxyCommandDie()
     {
         Cmd_Die();
     }
@@ -344,22 +347,22 @@ public class NetworkPlayerController : NetworkBehaviour
 
     private void OnDisable()
     {
-        EventManager.movementMethods -= CmdMoveRight;
-        EventManager.movementMethods -= CmdMoveLeft;
-        EventManager.movementMethods -= CmdMoveJump;
-        EventManager.movementMethods -= cameraMovement;
-        EventManager.movementMethods -= rotator;
-        EventManager.movementMethods -= shotPointer;
+        EventManager.movementMethods -= Cmd_MoveRight;
+        EventManager.movementMethods -= Cmd_MoveLeft;
+        EventManager.movementMethods -= Cmd_MoveJump;
+        EventManager.movementMethods -= CameraMovement;
+        EventManager.movementMethods -= Rotator;
+        EventManager.movementMethods -= ShotPointer;
     }
 
     private void OnDestroy()
     {
-        EventManager.movementMethods -= CmdMoveRight;
-        EventManager.movementMethods -= CmdMoveLeft;
-        EventManager.movementMethods -= CmdMoveJump;
-        EventManager.movementMethods -= cameraMovement;
-        EventManager.movementMethods -= rotator;
-        EventManager.movementMethods -= shotPointer;
+        EventManager.movementMethods -= Cmd_MoveRight;
+        EventManager.movementMethods -= Cmd_MoveLeft;
+        EventManager.movementMethods -= Cmd_MoveJump;
+        EventManager.movementMethods -= CameraMovement;
+        EventManager.movementMethods -= Rotator;
+        EventManager.movementMethods -= ShotPointer;
     }
 
 }

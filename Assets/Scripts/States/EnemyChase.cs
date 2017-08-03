@@ -38,14 +38,14 @@ public class EnemyChase : IFSMState<EnemyController>
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
 
-        if (agent.remainingDistance <= e.maximumAttackDistance + 0.1f)
+        if (agent.remainingDistance <= e.maximumAttackDistance)
         {
             string state = ("EnemyAttack");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
 
 
-        if (e.Health <= 0)
+        if (e.health <= 0)
         {
             string state = ("EnemyDead");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
@@ -54,6 +54,6 @@ public class EnemyChase : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-
+        e.UpdatePlayerDead();
     }
 }

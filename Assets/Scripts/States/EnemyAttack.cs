@@ -37,13 +37,14 @@ public class EnemyAttack : IFSMState<EnemyController>
     {
         agent.destination = attackedPlayer.transform.position;
 
-        if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach == null)
+        if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach[0] == null || e.killedPlayer == true)
         {
             string state = ("EnemyChase");
+            e.killedPlayer = false;
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
         }
 
-        if (e.Health <= 0)
+        if (e.health <= 0)
         {
             string state = ("EnemyDead");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
@@ -52,14 +53,16 @@ public class EnemyAttack : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
+        e.UpdatePlayerDead();
+        agent.velocity = Vector3.zero;
         if (!e.attacks)
         {
-            e.GetComponent<EnemyAnimationManager>().playAttackAnimation();
+            e.GetComponent<EnemyAnimationManager>().PlayAttackAnimation();
             e.attacks = true;
         }
         else
         {
-            e.GetComponent<EnemyAnimationManager>().attackAnimationEnds();
+            e.GetComponent<EnemyAnimationManager>().AttackAnimationEnds();
         }
     }
 
@@ -67,6 +70,6 @@ public class EnemyAttack : IFSMState<EnemyController>
 
     public void DoDamage()
     {
-        attackedPlayer.GetComponent<NetworkPlayerController>().ReceiveDamage(enemyDamage);
+        attackedPlayer.GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
     }
 }

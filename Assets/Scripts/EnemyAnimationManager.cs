@@ -28,7 +28,7 @@ public class EnemyAnimationManager : MonoBehaviour
         }
     }
 
-    public void playAttackAnimation()
+    public void PlayAttackAnimation()
     {
         if (!isAttacking)
         {
@@ -37,7 +37,7 @@ public class EnemyAnimationManager : MonoBehaviour
         }
     }
 
-    public void attackAnimationEnds()
+    public void AttackAnimationEnds()
     {
         isAttacking = false;
     }

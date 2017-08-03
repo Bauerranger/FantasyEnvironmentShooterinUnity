@@ -10,6 +10,7 @@ public class EventManager : MonoBehaviour
     public static event Action shotMethods;
     public static event Action hitEnemyMethods;
     public static event Action menuMethods;
+    public static event Action playerStatusMethods;
     public static event Action dieMethods;
 
     public static void Movement()
@@ -18,13 +19,13 @@ public class EventManager : MonoBehaviour
             movementMethods();
     }
 
-    public static void attack()
+    public static void Attack()
     {
         if (attackMethods != null)
             attackMethods();
     }
 
-    public static void shoot()
+    public static void Shoot()
     {
         if (shotMethods != null)
         {
@@ -45,6 +46,14 @@ public class EventManager : MonoBehaviour
         if (menuMethods != null)
         {
             menuMethods();
+        }
+    }
+
+    public static void ObservePlayerStatus()
+    {
+        if (playerStatusMethods != null)
+        {
+            playerStatusMethods();
         }
     }
 

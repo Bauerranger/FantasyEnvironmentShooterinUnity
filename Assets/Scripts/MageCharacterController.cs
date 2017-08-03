@@ -71,7 +71,7 @@ public class MageCharacterController : NetworkBehaviour
         if (isLocalPlayer)
         {
             EventManager.Movement();
-            EventManager.attack();
+            EventManager.Attack();
             EventManager.Menu();
             moveStop();
         }
@@ -229,7 +229,7 @@ public class MageCharacterController : NetworkBehaviour
     public void spawnShot()
     {
         if (isLocalPlayer)
-        EventManager.shoot();
+        EventManager.Shoot();
     }
 
     public void animationEnds()

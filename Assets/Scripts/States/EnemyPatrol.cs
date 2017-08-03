@@ -19,6 +19,7 @@ public class EnemyPatrol : IFSMState<EnemyController>
         agent = e.GetComponent<NavMeshAgent>();
         seeingDistance = e.seeingDistance;
         agent.stoppingDistance = 0;
+        if (e.currentWaypoint)
         agent.destination = e.currentWaypoint.position;
     }
 
@@ -30,13 +31,13 @@ public class EnemyPatrol : IFSMState<EnemyController>
 
     public void Reason(EnemyController e)
     {
-        if (e.playersInReach.Count > 0) //if for null did not work
+        if (e.playersInReach.Count > 0)
         {
             string state = ("EnemyChase");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.playersInReach[0]);
         }
         
-        if (e.Health <= 0)
+        if (e.health <= 0)
         {
             string state = ("EnemyDead");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
@@ -45,7 +46,8 @@ public class EnemyPatrol : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        if (agent.remainingDistance < 0.5f)
+        e.UpdatePlayerDead();
+        if (agent.remainingDistance < 0.5f && e.currentWaypoint)
         {
             e.currentWaypoint.GetComponent<WayPointGiver>().GiveWayPoint(e);
         }
