@@ -47,7 +47,7 @@ public class EnemyPatrol : IFSMState<EnemyController>
     {
         if (agent.remainingDistance < 0.5f)
         {
-            e.currentWaypoint.GetComponent<wayPointGiver>().giveWayPoint(e);
+            e.currentWaypoint.GetComponent<WayPointGiver>().GiveWayPoint(e);
         }
         if (e.currentWaypoint != null && e.currentWaypoint.position != agent.destination)
             agent.destination = e.currentWaypoint.position;

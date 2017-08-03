@@ -47,16 +47,16 @@ public class OptionsBehavior : MonoBehaviour
     {
         if (Input.GetKeyDown("escape") && !menuOpen && !processingInput)
         {
-            if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkMovement>() != null)
-                GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkMovement>().inputIsActive = false;
+            if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>() != null)
+                GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = false;
             processingInput = true;
             menuOpen = true;
         }
 
         if (Input.GetKeyDown("escape") && menuOpen && !processingInput)
         {
-            if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkMovement>() != null)
-                GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkMovement>().inputIsActive = true;
+            if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>() != null)
+                GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = true;
             processingInput = true;
             menuOpen = false;
         }
@@ -147,8 +147,8 @@ public class OptionsBehavior : MonoBehaviour
     public void closeByButton()
     {
         menuOpen = false;
-        if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkMovement>() != null)
-            GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkMovement>().inputIsActive = true;
+        if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>() != null)
+            GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = true;
     }
 
     public void rotateLoader()

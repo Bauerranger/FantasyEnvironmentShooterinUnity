@@ -2,20 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class wayPointGiver : MonoBehaviour {
+public class WayPointGiver : MonoBehaviour {
 
     [SerializeField]
     private Transform nextWayPoint;
 
-/*    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Enemy" && nextWayPoint != null && other.GetComponent<EnemyController>().isPatroling)
-        {
-            other.GetComponent<EnemyController>().currentWaypoint = nextWayPoint;
-        }
-    }*/
-
-    public void giveWayPoint(EnemyController controller)
+    public void GiveWayPoint(EnemyController controller)
     {
         controller.currentWaypoint = nextWayPoint;
     }

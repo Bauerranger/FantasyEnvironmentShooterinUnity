@@ -70,9 +70,9 @@ public class MageCharacterController : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            EventManager.movement();
+            EventManager.Movement();
             EventManager.attack();
-            EventManager.menu();
+            EventManager.Menu();
             moveStop();
         }
     }

@@ -37,7 +37,7 @@ public class NetworkShootBehaviors : NetworkBehaviour
             return;
         EventManager.shotMethods += ProxyCommandNormalShot;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
-        player = this.gameObject.GetComponent<NetworkMovement>().playerName;
+        player = this.gameObject.GetComponent<NetworkPlayerController>().playerName;
     }
 
     private void Update()

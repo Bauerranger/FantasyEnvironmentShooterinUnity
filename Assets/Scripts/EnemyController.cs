@@ -34,7 +34,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
     }
 
-    void selfDestruct()
+    void SelfDestruct()
     {
         dead = true;
     }

@@ -93,5 +93,21 @@ public class NetworkEnemyManager : NetworkBehaviour
         NetworkServer.Destroy(this.gameObject);
     }
 
+    public void ProxyCommandInflictDamage(int damage, GameObject player)
+    {
+        Cmd_InflictDamage(damage, player);
+    }
+
+    [Command]
+    void Cmd_InflictDamage(int damage, GameObject player)
+    {
+        Rpc_InflictDamage(damage, player);
+    }
+
+    [ClientRpc]
+    void Rpc_InflictDamage(int damage, GameObject player)
+    {
+        player.GetComponent<NetworkPlayerController>().health -= damage;
+    }
 }
 

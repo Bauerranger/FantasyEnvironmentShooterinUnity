@@ -1,22 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
+    public static event Action movementMethods;
+    public static event Action attackMethods;
+    public static event Action shotMethods;
+    public static event Action hitEnemyMethods;
+    public static event Action menuMethods;
+    public static event Action dieMethods;
 
-    public delegate void movementDelegate();
-    public static event movementDelegate movementMethods;
-    public delegate void attackDelegate();
-    public static event attackDelegate attackMethods;
-    public delegate void shotDelegate();
-    public static event shotDelegate shotMethods;
-    public delegate void hitEnemyDelegate();
-    public static event hitEnemyDelegate hitEnemyMethods;
-    public delegate void menuDelegate();
-    public static event menuDelegate menuMethods;
-
-    public static void movement()
+    public static void Movement()
     {
         if (movementMethods != null)
             movementMethods();
@@ -36,7 +32,7 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void hitEnemy()
+    public static void HitEnemy()
     {
         if (shotMethods != null)
         {
@@ -44,11 +40,19 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void menu()
+    public static void Menu()
     {
         if (menuMethods != null)
         {
             menuMethods();
+        }
+    }
+
+    public static void Die()
+    {
+        if (dieMethods != null)
+        {
+            dieMethods();
         }
     }
 }

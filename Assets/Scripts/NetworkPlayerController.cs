@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class NetworkMovement : NetworkBehaviour
+public class NetworkPlayerController : NetworkBehaviour
 {
-    int playerNumber;
+    public bool dies = false;
+    private bool isDead = false;
+    public int health;
+    private int playerNumber;
     public string playerName;
     [SerializeField]
     private float cursorDistance = 3.00f;
@@ -55,7 +58,6 @@ public class NetworkMovement : NetworkBehaviour
         GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerTwo>().countPlayers++;
         playerNumber = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerTwo>().countPlayers;
         playerName = ("Player " + (playerNumber));
-        Debug.Log("My name is " + playerName);//*********************************************************************************************************************************************
         cameraMover = GameObject.FindGameObjectWithTag("CameraMover");
         cameraMover.transform.position = new Vector3(characterRigidbody.transform.position.x + cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         cameraMover.transform.rotation = Quaternion.Euler(cameraAngle);
@@ -67,20 +69,23 @@ public class NetworkMovement : NetworkBehaviour
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
         EventManager.menuMethods += menuCanvas.GetComponent<OptionsBehavior>().turnOffMenu;
         inputIsActive = true;
+        EventManager.dieMethods += ProxyCommandDie;
     }
 
     void Update()
     {
-        if (inputIsActive)
+        if (inputIsActive && !isDead)
             fetchInput();
         updateMethods();
+        if (dies && !isDead)
+            EventManager.Die();
     }
 
     private void FixedUpdate()
     {
-        EventManager.movement();
+        EventManager.Movement();
         EventManager.attack();
-        EventManager.menu();
+        EventManager.Menu();
         moveStop();
     }
 
@@ -321,6 +326,7 @@ public class NetworkMovement : NetworkBehaviour
     public void Rpc_Die()
     {
         animator.SetTrigger("Die");
+        isDead = true;
     }
 
     private void OnCollisionEnter(Collision collision)

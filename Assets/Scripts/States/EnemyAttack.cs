@@ -67,6 +67,6 @@ public class EnemyAttack : IFSMState<EnemyController>
 
     public void DoDamage()
     {
-        attackedPlayer.GetComponent<NetworkMovement>().ReceiveDamage(enemyDamage);
+        attackedPlayer.GetComponent<NetworkPlayerController>().ReceiveDamage(enemyDamage);
     }
 }

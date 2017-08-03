@@ -35,12 +35,12 @@ public class EnemyDead : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        playDeathAnimation();
+        PlayDeathAnimation();
         if (e.dead)
             e.GetComponent<NetworkEnemyManager>().ProxyCommandDie();
     }
 
-    void playDeathAnimation()
+    void PlayDeathAnimation()
     {
         if (!dies)
             animator.SetTrigger("Die");
