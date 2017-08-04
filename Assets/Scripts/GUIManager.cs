@@ -11,91 +11,39 @@ public class GUIBehavior : MonoBehaviour
     [SerializeField]
     private Image imageLoad;
     [SerializeField]
-    private Image imageBackGroundMainMenue;
+    private Image imageBackGround;
     [SerializeField]
-    private Button Button1MainMenue;
+    private Button Button1;
     [SerializeField]
-    private Button Button2MainMenue;
+    private Button Button2;
     [SerializeField]
-    private Button Button3MainMenue;
-    [SerializeField]
-    private Image imageBackGroundInGameMenue;
-    [SerializeField]
-    private Button Button1InGameMenue;
-    [SerializeField]
-    private Button Button2InGameMenue;
-    [SerializeField]
-    private Button Button3InGameMenue;
+    private Button Button3;
     AsyncOperation operation;
     private GameObject NetworkManager;
     private bool menuOpened = false;
     private bool menuOpen = false;
     private bool processingInput = false;
     private bool loads = false;
-    private bool menueIsSetForScene = false;
-    private int oldScene = 99;
 
 
 
 
     private void Start()
     {
-        DontDestroyOnLoad(transform.gameObject);
         NetworkManager = GameObject.FindGameObjectWithTag("NetworkManager");
         if (imageLoad)
             imageLoad.enabled = false;
-        if (imageBackGroundInGameMenue)
-            imageBackGroundInGameMenue.enabled = false;
-        if (Button1InGameMenue)
-            Button1InGameMenue.enabled = false;
-        if (Button2InGameMenue)
-            Button2InGameMenue.enabled = false;
-        if (Button3InGameMenue)
-            Button3InGameMenue.enabled = false;
     }
 
     void Update()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        int buildIndex = currentScene.buildIndex;
-        if (oldScene != buildIndex)
-        {
-            if (buildIndex == 0)
-            {
-                if (imageBackGroundInGameMenue)
-                    imageBackGroundInGameMenue.enabled = true;
-                if (Button1InGameMenue)
-                    Button1InGameMenue.enabled = true;
-                if (Button2InGameMenue)
-                    Button2InGameMenue.enabled = true;
-                if (Button3InGameMenue)
-                    Button3InGameMenue.enabled = true;
-                oldScene = buildIndex;
-            }
-            if (buildIndex > 0)
-            {
-                loads = false;
-                if (imageLoad)
-                    imageLoad.enabled = false;
-                if (imageBackGroundInGameMenue)
-                    imageBackGroundInGameMenue.enabled = true;
-                if (Button1InGameMenue)
-                    Button1InGameMenue.enabled = true;
-                if (Button2InGameMenue)
-                    Button2InGameMenue.enabled = true;
-                if (Button3InGameMenue)
-                    Button3InGameMenue.enabled = true;
-                oldScene = buildIndex;
-            }
-        }
-
-        FetchInput();
-        UpdateMethods();
+        fetchInput();
+        updateMethods();
         if (loads)
             imageLoad.transform.Rotate(Vector3.forward * 20);
     }
 
-    void FetchInput()
+    void fetchInput()
     {
         if (Input.GetKeyDown("escape") && !menuOpen && !processingInput)
         {
@@ -114,56 +62,56 @@ public class GUIBehavior : MonoBehaviour
         }
     }
 
-    private void UpdateMethods()
+    private void updateMethods()
     {
         if (menuOpen)
         {
-            EventManager.menuMethods += OpenMenu;
-            EventManager.menuMethods -= CloseMenu;
+            EventManager.menuMethods += openMenu;
+            EventManager.menuMethods -= closeMenu;
             processingInput = false;
         }
 
         if (!menuOpen)
         {
-            EventManager.menuMethods += CloseMenu;
-            EventManager.menuMethods -= OpenMenu;
+            EventManager.menuMethods += closeMenu;
+            EventManager.menuMethods -= openMenu;
             processingInput = false;
         }
     }
 
-    public void StartHost()
+    public void startHost()
     {
-        RotateLoader();
+        rotateLoader();
         NetworkServer.Reset();
         NetworkManagerTwo.singleton.StartHost();
     }
 
-    public void StartClient()
+    public void startClient()
     {
-        RotateLoader();
+        rotateLoader();
         NetworkManagerTwo.singleton.StartClient();
     }
 
-    public void TurnOffMenu()
+    public void turnOffMenu()
     {
         if (gameObject.GetComponent<Canvas>() != null)
             gameObject.GetComponent<Canvas>().enabled = false;
     }
 
-    public void TurnOnMenu()
+    public void turnOnMenu()
     {
         if (gameObject.GetComponent<Canvas>() != null)
             gameObject.GetComponent<Canvas>().enabled = true;
     }
 
-    public void QuitApplication()
+    public void quitApplication()
     {
 
         gameObject.GetComponent<Canvas>().enabled = false;
         Application.Quit();
     }
 
-    public void Disconnect()
+    public void disconnect()
     {
         if (NetworkServer.active)
         {
@@ -176,76 +124,49 @@ public class GUIBehavior : MonoBehaviour
         }
     }
 
-    public void OpenMenu()
+    public void openMenu()
     {
         if (!menuOpened)
         {
-            EventManager.menuMethods -= TurnOffMenu;
+            EventManager.menuMethods -= turnOffMenu;
             Cursor.visible = true;
-            EventManager.menuMethods += TurnOnMenu;
+            EventManager.menuMethods += turnOnMenu;
             menuOpened = true;
         }
     }
 
-    public void CloseMenu()
+    public void closeMenu()
     {
         if (menuOpened)
         {
-            EventManager.menuMethods -= TurnOnMenu;
+            EventManager.menuMethods -= turnOnMenu;
             Cursor.visible = false;
-            EventManager.menuMethods += TurnOffMenu;
+            EventManager.menuMethods += turnOffMenu;
             menuOpened = false;
         }
     }
 
-    public void CloseByButton()
+    public void closeByButton()
     {
         menuOpen = false;
         if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>() != null)
             GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = true;
     }
 
-    public void RotateLoader()
+    public void rotateLoader()
     {
+
         Vector3 rotateLoad = new Vector3(0, 0, 0.1f);
-        if (imageBackGroundMainMenue != null)
-            imageBackGroundMainMenue.enabled = false;
-        if (Button1MainMenue != null)
-            Button1MainMenue.gameObject.SetActive(false);
-        if (Button2MainMenue != null)
-            Button2MainMenue.gameObject.SetActive(false);
-        if (Button3MainMenue != null)
-            Button3MainMenue.gameObject.SetActive(false);
+        if (imageBackGround != null)
+            imageBackGround.enabled = false;
+        if (Button1 != null)
+            Button1.gameObject.SetActive(false);
+        if (Button2 != null)
+            Button2.gameObject.SetActive(false);
+        if (Button3 != null)
+            Button3.gameObject.SetActive(false);
         if (imageLoad != null)
             imageLoad.enabled = true;
         loads = true;
-    }
-
-    public void showLooseScreen()
-    {
-        if (imageLoad)
-            imageLoad.enabled = false;
-        if (imageBackGroundInGameMenue)
-            imageBackGroundInGameMenue.enabled = false;
-        if (Button1InGameMenue)
-            Button1InGameMenue.enabled = false;
-        if (Button2InGameMenue)
-            Button2InGameMenue.enabled = false;
-        if (Button3InGameMenue)
-            Button3InGameMenue.enabled = false;
-    }
-
-    public void showWinScreen()
-    {
-        if (imageLoad)
-            imageLoad.enabled = false;
-        if (imageBackGroundInGameMenue)
-            imageBackGroundInGameMenue.enabled = false;
-        if (Button1InGameMenue)
-            Button1InGameMenue.enabled = false;
-        if (Button2InGameMenue)
-            Button2InGameMenue.enabled = false;
-        if (Button3InGameMenue)
-            Button3InGameMenue.enabled = false;
     }
 }
