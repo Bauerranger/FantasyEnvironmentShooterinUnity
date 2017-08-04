@@ -1,7 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.Networking;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class GUIBehavior : MonoBehaviour
 {
@@ -18,11 +21,11 @@ public class GUIBehavior : MonoBehaviour
     [SerializeField]
     private Image imageBackGroundInGameMenue;
     [SerializeField]
-    private Button Button4InGameMenue;
+    private Button Button1InGameMenue;
     [SerializeField]
-    private Button Button5InGameMenue;
+    private Button Button2InGameMenue;
     [SerializeField]
-    private Button Button6InGameMenue;
+    private Button Button3InGameMenue;
     AsyncOperation operation;
     private GameObject NetworkManager;
     private bool menuOpened = false;
@@ -41,10 +44,14 @@ public class GUIBehavior : MonoBehaviour
         NetworkManager = GameObject.FindGameObjectWithTag("NetworkManager");
         if (imageLoad)
             imageLoad.enabled = false;
+        if (imageBackGroundInGameMenue)
             imageBackGroundInGameMenue.enabled = false;
-            Button4InGameMenue.enabled = false;
-            Button5InGameMenue.enabled = false;
-            Button6InGameMenue.enabled = false;
+        if (Button1InGameMenue)
+            Button1InGameMenue.enabled = false;
+        if (Button2InGameMenue)
+            Button2InGameMenue.enabled = false;
+        if (Button3InGameMenue)
+            Button3InGameMenue.enabled = false;
     }
 
     void Update()
@@ -57,12 +64,12 @@ public class GUIBehavior : MonoBehaviour
             {
                 if (imageBackGroundInGameMenue)
                     imageBackGroundInGameMenue.enabled = true;
-                if (Button4InGameMenue)
-                    Button4InGameMenue.enabled = true;
-                if (Button5InGameMenue)
-                    Button5InGameMenue.enabled = true;
-                if (Button6InGameMenue)
-                    Button6InGameMenue.enabled = true;
+                if (Button1InGameMenue)
+                    Button1InGameMenue.enabled = true;
+                if (Button2InGameMenue)
+                    Button2InGameMenue.enabled = true;
+                if (Button3InGameMenue)
+                    Button3InGameMenue.enabled = true;
                 oldScene = buildIndex;
             }
             if (buildIndex > 0)
@@ -72,12 +79,12 @@ public class GUIBehavior : MonoBehaviour
                     imageLoad.enabled = false;
                 if (imageBackGroundInGameMenue)
                     imageBackGroundInGameMenue.enabled = true;
-                if (Button4InGameMenue)
-                    Button4InGameMenue.enabled = true;
-                if (Button5InGameMenue)
-                    Button5InGameMenue.enabled = true;
-                if (Button6InGameMenue)
-                    Button6InGameMenue.enabled = true;
+                if (Button1InGameMenue)
+                    Button1InGameMenue.enabled = true;
+                if (Button2InGameMenue)
+                    Button2InGameMenue.enabled = true;
+                if (Button3InGameMenue)
+                    Button3InGameMenue.enabled = true;
                 oldScene = buildIndex;
             }
         }
@@ -220,12 +227,12 @@ public class GUIBehavior : MonoBehaviour
             imageLoad.enabled = false;
         if (imageBackGroundInGameMenue)
             imageBackGroundInGameMenue.enabled = false;
-        if (Button4InGameMenue)
-            Button4InGameMenue.enabled = false;
-        if (Button5InGameMenue)
-            Button5InGameMenue.enabled = false;
-        if (Button6InGameMenue)
-            Button6InGameMenue.enabled = false;
+        if (Button1InGameMenue)
+            Button1InGameMenue.enabled = false;
+        if (Button2InGameMenue)
+            Button2InGameMenue.enabled = false;
+        if (Button3InGameMenue)
+            Button3InGameMenue.enabled = false;
     }
 
     public void showWinScreen()
@@ -234,11 +241,11 @@ public class GUIBehavior : MonoBehaviour
             imageLoad.enabled = false;
         if (imageBackGroundInGameMenue)
             imageBackGroundInGameMenue.enabled = false;
-        if (Button4InGameMenue)
-            Button4InGameMenue.enabled = false;
-        if (Button5InGameMenue)
-            Button5InGameMenue.enabled = false;
-        if (Button6InGameMenue)
-            Button6InGameMenue.enabled = false;
+        if (Button1InGameMenue)
+            Button1InGameMenue.enabled = false;
+        if (Button2InGameMenue)
+            Button2InGameMenue.enabled = false;
+        if (Button3InGameMenue)
+            Button3InGameMenue.enabled = false;
     }
 }
