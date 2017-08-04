@@ -50,6 +50,5 @@ public class ScoreManager : NetworkBehaviour
         GameObject.FindGameObjectWithTag("scoreText1").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
         if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore.Count > 1)
             GameObject.FindGameObjectWithTag("scoreText2").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[1].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
-        Debug.Log("Git Good" + GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
-    }
+        }
 }

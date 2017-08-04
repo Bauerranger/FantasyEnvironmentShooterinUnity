@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class NetworkPlayerHealth : NetworkBehaviour {
+public class NetworkPlayerHealth : NetworkBehaviour
+{
 
     public int health;
     private int oldHealth;
@@ -21,7 +22,10 @@ public class NetworkPlayerHealth : NetworkBehaviour {
     public void ObserveHealth()
     {
         if (health <= 0)
+        {
+            EventManager.playerStatusMethods -= ObserveHealth;
             GetComponent<NetworkPlayerController>().dies = true;
+        }
     }
 
     private void Update()
@@ -43,5 +47,10 @@ public class NetworkPlayerHealth : NetworkBehaviour {
     void Rpc_SetHealth(int newHealth)
     {
         health = newHealth;
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.playerStatusMethods -= ObserveHealth;
     }
 }

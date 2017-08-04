@@ -64,4 +64,15 @@ public class EventManager : MonoBehaviour
             dieMethods();
         }
     }
+
+    private void OnDestroy()
+    {
+        movementMethods = null;
+        attackMethods = null;
+        shotMethods = null;
+        hitEnemyMethods = null;
+        menuMethods = null;
+        playerStatusMethods = null;
+        dieMethods = null;
+    }
 }

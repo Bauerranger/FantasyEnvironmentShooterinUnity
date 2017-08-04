@@ -170,5 +170,11 @@ public class GUIBehavior : MonoBehaviour
             imageLoad.enabled = true;
         loads = true;
     }
-
+    private void OnDestroy()
+    {
+        EventManager.menuMethods -= TurnOnMenu;
+        EventManager.menuMethods -= TurnOffMenu;
+        EventManager.menuMethods -= OpenMenu;
+        EventManager.menuMethods -= CloseMenu;
+    }
 }
