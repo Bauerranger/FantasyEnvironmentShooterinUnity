@@ -17,5 +17,6 @@ public class ScoreManager : MonoBehaviour
     public void addScore(string player, int score)
     {
         highscore[player] += score;
+        Debug.Log("New score for " + player + " is " + highscore[player]);
     }
 }

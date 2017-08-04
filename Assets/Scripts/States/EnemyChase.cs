@@ -27,7 +27,6 @@ public class EnemyChase : IFSMState<EnemyController>
 
     public void Reason(EnemyController e)
     {
-
         agent.destination = chasedPlayer.transform.position;
 
         if (e.playersInReach.Count == 0)
@@ -41,8 +40,7 @@ public class EnemyChase : IFSMState<EnemyController>
             string state = ("EnemyAttack");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
-
-
+        
         if (e.health <= 0)
         {
             string state = ("EnemyDead");

@@ -22,45 +22,23 @@ public class EnemyWait : IFSMState<EnemyController>
 
     public void Exit(EnemyController e)
     {
-        Debug.Log("stopped waiting");
     }
 
     public void Reason(EnemyController e)
     {
-        if (players.Count != GameObject.FindGameObjectsWithTag("Player").Length)
-            players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
-        RaycastHit hit;
-        foreach (GameObject player in players)
+        if (e.playersInReach.Count > 0)
         {
-            if (Physics.Raycast(e.transform.position, (player.transform.position + new Vector3(0, 1, 0)) - e.transform.position, out hit, seeingDistance))
-            {
-                if (hit.transform.tag == "Player")
-                {
-                    Debug.DrawRay(e.transform.position, player.transform.position - e.transform.position, Color.red);
-                    if (!e.usesRangedWeapons)
-                    {
-                        string state = ("EnemyChase");
-                        e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, player);
-                    }
-                    if (e.usesRangedWeapons)
-                    {
-                        string state = ("EnemyAttack");
-                        e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, player);
-                    }
-                }
-                else
-                {
-                    Debug.DrawRay(e.transform.position, player.transform.position - e.transform.position, Color.green);
-                }
-            }
+            string state = ("EnemyChase");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.playersInReach[0]);
+        }
 
-            if (e.health <= 0)
-            {
-                string state = ("EnemyDead");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, players[0]);
-            }
+        if (e.health <= 0)
+        {
+            string state = ("EnemyDead");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
         }
     }
+
 
     public void Update(EnemyController e)
     {

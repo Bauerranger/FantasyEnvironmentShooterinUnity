@@ -25,6 +25,7 @@ public class NetworkEnemyManager : NetworkBehaviour
     void Rpc_TakeDamage(int damageTaken, string player)
     {
         this.GetComponent<EnemyController>().health -= damageTaken;
+        Debug.Log("My Life is now " + this.GetComponent<EnemyController>().health);
         GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().addScore(player, damageTaken);
         if (this.GetComponent<EnemyController>().health <= 0)
             GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().addScore(player, this.GetComponent<EnemyController>().deathScore);
@@ -88,9 +89,8 @@ public class NetworkEnemyManager : NetworkBehaviour
         foreach (GameObject particle in deathParticles)
         {
             GameObject spawnedDeathParticles = Instantiate(particle, this.gameObject.transform.position, Quaternion.identity);
-            NetworkServer.Spawn(spawnedDeathParticles);
         }
-        NetworkServer.Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 }
 

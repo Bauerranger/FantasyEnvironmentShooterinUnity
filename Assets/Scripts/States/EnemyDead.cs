@@ -26,7 +26,7 @@ public class EnemyDead : IFSMState<EnemyController>
     public void Exit(EnemyController e)
     {
         Debug.Log("stopped being Dead 'Doh'");
-        agent.enabled = false;
+        agent.enabled = true;
         e.GetComponent<Collider>().enabled = true;
     }
 

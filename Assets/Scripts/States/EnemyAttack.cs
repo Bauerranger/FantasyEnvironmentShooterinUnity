@@ -34,8 +34,16 @@ public class EnemyAttack : IFSMState<EnemyController>
 
         if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
         {
-            string state = ("EnemyPatrol");
-            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
+            if (e.usesRangedWeapons)
+            {
+                string state = ("EnemyWait");
+                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
+            }
+            else
+            {
+                string state = ("EnemyPatrol");
+                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
+            }
         }
 
         if (e.health <= 0)
