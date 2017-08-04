@@ -26,7 +26,6 @@ public class EnemyPatrol : IFSMState<EnemyController>
     public void Exit(EnemyController e)
     {
         e.isPatroling = false;
-        Debug.Log("stopped patrolling");
     }
 
     public void Reason(EnemyController e)

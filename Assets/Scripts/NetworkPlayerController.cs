@@ -65,7 +65,8 @@ public class NetworkPlayerController : NetworkBehaviour
         EventManager.movementMethods += ShotPointer;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
-        EventManager.menuMethods += menuCanvas.GetComponent<OptionsBehavior>().turnOffMenu;
+        if (menuCanvas.GetComponent<GUIManager>() != null)
+            EventManager.menuMethods += menuCanvas.GetComponent<GUIManager>().turnOffMenu;
         inputIsActive = true;
         EventManager.dieMethods += ProxyCommandDie;
     }
@@ -89,11 +90,11 @@ public class NetworkPlayerController : NetworkBehaviour
         }
         EventManager.Movement();
         EventManager.Attack();
-        EventManager.Menu();
         EventManager.ObservePlayerStatus();
         if (dies && !isDead)
             EventManager.Die();
         MoveStop();
+        EventManager.Menu();
     }
 
     void UpdateMethods()
@@ -182,12 +183,14 @@ public class NetworkPlayerController : NetworkBehaviour
 
     void OpenMenu()
     {
-        menuCanvas.GetComponent<OptionsBehavior>().openMenu();
+        if (menuCanvas.GetComponent<GUIManager>() != null)
+            menuCanvas.GetComponent<GUIManager>().openMenu();
     }
 
     void CloseMenu()
     {
-        menuCanvas.GetComponent<OptionsBehavior>().closeMenu();
+        if (menuCanvas.GetComponent<GUIManager>() != null)
+            menuCanvas.GetComponent<GUIManager>().closeMenu();
     }
 
     void CameraMovement()

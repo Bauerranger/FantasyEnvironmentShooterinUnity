@@ -19,12 +19,10 @@ public class EnemyChase : IFSMState<EnemyController>
         maximumChasingDistance = e.maximumDistance;
         agent = e.GetComponent<NavMeshAgent>();
         agent.stoppingDistance = e.maximumAttackDistance;
-        Debug.Log("started chasing");
     }
 
     public void Exit(EnemyController e)
     {
-        Debug.Log("stopped chasing");
     }
 
     public void Reason(EnemyController e)

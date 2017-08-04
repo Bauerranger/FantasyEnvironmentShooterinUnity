@@ -46,7 +46,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     public void InflictDamage()
     {
-        if(playersInReach[0])
+        if(playersInReach.Count > 0)
         playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
     }
 

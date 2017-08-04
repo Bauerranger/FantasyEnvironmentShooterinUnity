@@ -10,8 +10,6 @@ public class EnemyAttack : IFSMState<EnemyController>
         attackedPlayer = player;
     }
     private GameObject attackedPlayer;
-    private int enemyDamage;
-    private Transform destination;
     private NavMeshAgent agent;
     static readonly EnemyPatrol instance = new EnemyPatrol();
     public static EnemyPatrol Instance
@@ -21,26 +19,22 @@ public class EnemyAttack : IFSMState<EnemyController>
 
     public void Enter(EnemyController e)
     {
-        enemyDamage = e.enemyDamage;
         agent = e.GetComponent<NavMeshAgent>();
-        Debug.Log("started attack");
     }
 
     public void Exit(EnemyController e)
     {
         agent.stoppingDistance = 0;
-        agent.SetDestination(attackedPlayer.transform.position);
-        Debug.Log("stopped attack");
+        e.killedPlayer = false;
     }
 
     public void Reason(EnemyController e)
     {
         agent.destination = attackedPlayer.transform.position;
 
-        if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach[0] == null || e.killedPlayer == true)
+        if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
         {
-            string state = ("EnemyChase");
-            e.killedPlayer = false;
+            string state = ("EnemyPatrol");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
         }
 
@@ -64,12 +58,5 @@ public class EnemyAttack : IFSMState<EnemyController>
         {
             e.GetComponent<EnemyAnimationManager>().AttackAnimationEnds();
         }
-    }
-
-
-
-    public void DoDamage()
-    {
-        attackedPlayer.GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
     }
 }

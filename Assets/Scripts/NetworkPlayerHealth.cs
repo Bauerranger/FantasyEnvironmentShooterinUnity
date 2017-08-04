@@ -31,7 +31,6 @@ public class NetworkPlayerHealth : NetworkBehaviour {
             Cmd_SetHealth(health);
             oldHealth = health;
         }
-        Debug.Log("I am  " + GetComponent<NetworkPlayerController>().playerName + " and my health is " + health);
     }
 
     [Command]

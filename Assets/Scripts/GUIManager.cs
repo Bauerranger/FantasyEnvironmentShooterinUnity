@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class GUIManager : MonoBehaviour
+public class GUIBehavior : MonoBehaviour
 {
     [SerializeField]
     private Image imageLoad;
@@ -89,18 +89,19 @@ public class GUIManager : MonoBehaviour
     public void startClient()
     {
         rotateLoader();
-        NetworkServer.Reset();
         NetworkManagerTwo.singleton.StartClient();
     }
 
     public void turnOffMenu()
     {
-        gameObject.GetComponent<Canvas>().enabled = false;
+        if (gameObject.GetComponent<Canvas>() != null)
+            gameObject.GetComponent<Canvas>().enabled = false;
     }
 
     public void turnOnMenu()
     {
-        gameObject.GetComponent<Canvas>().enabled = true;
+        if (gameObject.GetComponent<Canvas>() != null)
+            gameObject.GetComponent<Canvas>().enabled = true;
     }
 
     public void quitApplication()
@@ -154,6 +155,7 @@ public class GUIManager : MonoBehaviour
 
     public void rotateLoader()
     {
+
         Vector3 rotateLoad = new Vector3(0, 0, 0.1f);
         if (imageBackGround != null)
             imageBackGround.enabled = false;
