@@ -30,7 +30,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
             fsm.Configure(this, new EnemyWait());
     }
 
-    public void TakeDamage(int damageTaken, string player)
+    public void TakeDamage(int damageTaken, GameObject player)
     {
         GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
     }

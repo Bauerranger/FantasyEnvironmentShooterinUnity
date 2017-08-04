@@ -10,9 +10,9 @@ public class NetworkEnemyManager : NetworkBehaviour
     private List<GameObject> deathParticles = new List<GameObject>();
 
 
-    public void ProxyCommandTakeDamage(int damageTaken, string player)
+    public void ProxyCommandTakeDamage(int damageTaken, GameObject player)
     {
-        Cmd_TakeDamage(damageTaken, player);
+        Cmd_TakeDamage(damageTaken, player.GetComponent<NetworkIdentity>().netId.ToString());
     }
 
     [Command]
@@ -26,9 +26,9 @@ public class NetworkEnemyManager : NetworkBehaviour
     {
         this.GetComponent<EnemyController>().health -= damageTaken;
         Debug.Log("My Life is now " + this.GetComponent<EnemyController>().health);
-        GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().addScore(player, damageTaken);
+        GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ProxyCommandAddScore(player, damageTaken);
         if (this.GetComponent<EnemyController>().health <= 0)
-            GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().addScore(player, this.GetComponent<EnemyController>().deathScore);
+            GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ProxyCommandAddScore(player, this.GetComponent<EnemyController>().deathScore);
     }
 
     public void ProxyCommandChangeState(string stateName, GameObject player)

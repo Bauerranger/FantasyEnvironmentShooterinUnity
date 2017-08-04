@@ -5,8 +5,8 @@ using UnityEngine.Networking;
 
 public class ShotBase : MonoBehaviour
 {
-    public string player;
-    public void Setup(Vector3 initialPosition, Quaternion initialRotation, string playerShooting)
+    public GameObject player;
+    public void Setup(Vector3 initialPosition, Quaternion initialRotation, GameObject playerShooting)
     {
         transform.position = initialPosition;
         transform.rotation = initialRotation;

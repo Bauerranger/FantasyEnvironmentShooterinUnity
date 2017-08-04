@@ -28,7 +28,7 @@ public class NetworkShootBehaviors : NetworkBehaviour
     [SerializeField]
     private Transform ShootStartPoint;
     private Transform ShotTargetPoint;
-    string player;
+    private GameObject player;
     public float durationOfPowerUp = 0;
 
     void Start()
@@ -37,11 +37,13 @@ public class NetworkShootBehaviors : NetworkBehaviour
             return;
         EventManager.shotMethods += ProxyCommandNormalShot;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
-        player = this.gameObject.GetComponent<NetworkPlayerController>().playerName;
+        player = this.gameObject;
     }
 
     private void Update()
     {
+        if (player == null)
+            player = this.gameObject;
         if (!isLocalPlayer)
             return;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
@@ -66,12 +68,12 @@ public class NetworkShootBehaviors : NetworkBehaviour
     {
         CmdShoot(shotType.rapid, ShotTargetPoint.position);
     }
-    
+
     [Command]
     void CmdShoot(shotType type, Vector3 targetWorldPosition)
     {
         Quaternion rotation = Quaternion.LookRotation((targetWorldPosition - ShootStartPoint.position).normalized, Vector3.up);
-        Rpc_spawnShot(type, ShootStartPoint.position, rotation);       
+        Rpc_spawnShot(type, ShootStartPoint.position, rotation);
     }
 
     [ClientRpc]
