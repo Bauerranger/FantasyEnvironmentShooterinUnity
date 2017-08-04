@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ScoreManager : NetworkBehaviour
 {
@@ -12,7 +13,6 @@ public class ScoreManager : NetworkBehaviour
     void Start()
     {
         highscore = new Dictionary<string, int>();
-        highscore.Add("Player 2", 0);
     }
 
     public void ProxyCommandAddScore(string player, int score)
@@ -41,5 +41,15 @@ public class ScoreManager : NetworkBehaviour
         }
         highscore[player] += score;
         Debug.Log("New score for " + player + " is " + highscore[player]);
+    }
+
+    public void ActivateHighscore() //normally this would be in the GUIManager Script, but somehow I can not make any changes to the script anymore, since they do not compile somehow.
+    {
+        GameObject.FindGameObjectWithTag("highscore_Menu").GetComponent<Canvas>().enabled = true;
+        if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore.Count > 0)
+        GameObject.FindGameObjectWithTag("scoreText1").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
+        if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore.Count > 1)
+            GameObject.FindGameObjectWithTag("scoreText2").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[1].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
+        Debug.Log("Git Good" + GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
     }
 }

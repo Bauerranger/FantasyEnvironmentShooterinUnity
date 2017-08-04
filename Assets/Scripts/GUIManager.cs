@@ -24,7 +24,6 @@ public class GUIBehavior : MonoBehaviour
     private bool menuOpen = false;
     private bool processingInput = false;
     private bool loads = false;
-    private bool disableInput = false;
 
 
 
@@ -38,7 +37,6 @@ public class GUIBehavior : MonoBehaviour
 
     void Update()
     {
-        if (!disableInput)
             FetchInput();
         UpdateMethods();
         if (loads)
@@ -55,7 +53,7 @@ public class GUIBehavior : MonoBehaviour
             menuOpen = true;
         }
 
-        if (Input.GetKeyDown("escape") && menuOpen && !processingInput)
+            if (Input.GetKeyDown("escape") && menuOpen && !processingInput)
         {
             if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>() != null)
                 GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = true;
@@ -96,14 +94,15 @@ public class GUIBehavior : MonoBehaviour
 
     public void TurnOffMenu()
     {
-        if (gameObject.GetComponent<Canvas>() != null)
-            gameObject.GetComponent<Canvas>().enabled = false;
+        if (GameObject.FindGameObjectWithTag("inGame_Menu").GetComponent<Canvas>() != null)
+            GameObject.FindGameObjectWithTag("inGame_Menu").GetComponent<Canvas>().enabled = false;
     }
 
     public void TurnOnMenu()
     {
-        if (gameObject.GetComponent<Canvas>() != null)
-            gameObject.GetComponent<Canvas>().enabled = true;
+        if (GameObject.FindGameObjectWithTag("inGame_Menu").GetComponent<Canvas>() != null)
+            GameObject.FindGameObjectWithTag("inGame_Menu").GetComponent<Canvas>().enabled = true;
+        
     }
 
     public void QuitApplication()
@@ -172,13 +171,4 @@ public class GUIBehavior : MonoBehaviour
         loads = true;
     }
 
-    public void ActivateHighscore()
-    {
-        disableInput = true;
-        GameObject.FindGameObjectWithTag("highscore_Menu").GetComponent<Canvas>().enabled = true;
-        List<GameObject> players = new List<GameObject>();
-        players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
-        GameObject.FindGameObjectWithTag("scoreText1").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighScoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
-        GameObject.FindGameObjectWithTag("scoreText2").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighScoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
-    }
 }

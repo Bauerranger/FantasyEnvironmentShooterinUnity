@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class NetworkPlayerController : NetworkBehaviour
 {
     public bool dies = false;
-    private bool isDead = false;
+    public bool isDead = false;
     private int playerNumber;
     public string playerName;
     [SerializeField]
@@ -65,8 +65,6 @@ public class NetworkPlayerController : NetworkBehaviour
         EventManager.movementMethods += ShotPointer;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
-        if (menuCanvas.GetComponent<GUIManager>() != null)
-            EventManager.menuMethods += menuCanvas.GetComponent<GUIManager>().turnOffMenu;
         inputIsActive = true;
         EventManager.dieMethods += ProxyCommandDie;
     }
@@ -80,6 +78,11 @@ public class NetworkPlayerController : NetworkBehaviour
         if (inputIsActive && !isDead)
             FetchInput();
         UpdateMethods();
+        if (isDead)
+        {
+            inputIsActive = false;
+            characterRigidbody.velocity = Vector3.zero;
+        }
     }
 
     private void FixedUpdate()
