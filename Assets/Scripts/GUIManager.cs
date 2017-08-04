@@ -24,6 +24,7 @@ public class GUIBehavior : MonoBehaviour
     private bool menuOpen = false;
     private bool processingInput = false;
     private bool loads = false;
+    private bool disableInput = false;
 
 
 
@@ -37,13 +38,14 @@ public class GUIBehavior : MonoBehaviour
 
     void Update()
     {
-        fetchInput();
-        updateMethods();
+        if (!disableInput)
+            FetchInput();
+        UpdateMethods();
         if (loads)
             imageLoad.transform.Rotate(Vector3.forward * 20);
     }
 
-    void fetchInput()
+    void FetchInput()
     {
         if (Input.GetKeyDown("escape") && !menuOpen && !processingInput)
         {
@@ -62,56 +64,56 @@ public class GUIBehavior : MonoBehaviour
         }
     }
 
-    private void updateMethods()
+    private void UpdateMethods()
     {
         if (menuOpen)
         {
-            EventManager.menuMethods += openMenu;
-            EventManager.menuMethods -= closeMenu;
+            EventManager.menuMethods += OpenMenu;
+            EventManager.menuMethods -= CloseMenu;
             processingInput = false;
         }
 
         if (!menuOpen)
         {
-            EventManager.menuMethods += closeMenu;
-            EventManager.menuMethods -= openMenu;
+            EventManager.menuMethods += CloseMenu;
+            EventManager.menuMethods -= OpenMenu;
             processingInput = false;
         }
     }
 
-    public void startHost()
+    public void StartHost()
     {
-        rotateLoader();
+        RotateLoader();
         NetworkServer.Reset();
         NetworkManagerTwo.singleton.StartHost();
     }
 
-    public void startClient()
+    public void StartClient()
     {
-        rotateLoader();
+        RotateLoader();
         NetworkManagerTwo.singleton.StartClient();
     }
 
-    public void turnOffMenu()
+    public void TurnOffMenu()
     {
         if (gameObject.GetComponent<Canvas>() != null)
             gameObject.GetComponent<Canvas>().enabled = false;
     }
 
-    public void turnOnMenu()
+    public void TurnOnMenu()
     {
         if (gameObject.GetComponent<Canvas>() != null)
             gameObject.GetComponent<Canvas>().enabled = true;
     }
 
-    public void quitApplication()
+    public void QuitApplication()
     {
 
         gameObject.GetComponent<Canvas>().enabled = false;
         Application.Quit();
     }
 
-    public void disconnect()
+    public void Disconnect()
     {
         if (NetworkServer.active)
         {
@@ -124,36 +126,36 @@ public class GUIBehavior : MonoBehaviour
         }
     }
 
-    public void openMenu()
+    public void OpenMenu()
     {
         if (!menuOpened)
         {
-            EventManager.menuMethods -= turnOffMenu;
+            EventManager.menuMethods -= TurnOffMenu;
             Cursor.visible = true;
-            EventManager.menuMethods += turnOnMenu;
+            EventManager.menuMethods += TurnOnMenu;
             menuOpened = true;
         }
     }
 
-    public void closeMenu()
+    public void CloseMenu()
     {
         if (menuOpened)
         {
-            EventManager.menuMethods -= turnOnMenu;
+            EventManager.menuMethods -= TurnOnMenu;
             Cursor.visible = false;
-            EventManager.menuMethods += turnOffMenu;
+            EventManager.menuMethods += TurnOffMenu;
             menuOpened = false;
         }
     }
 
-    public void closeByButton()
+    public void CloseByButton()
     {
         menuOpen = false;
         if (GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>() != null)
             GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = true;
     }
 
-    public void rotateLoader()
+    public void RotateLoader()
     {
 
         Vector3 rotateLoad = new Vector3(0, 0, 0.1f);
@@ -168,5 +170,15 @@ public class GUIBehavior : MonoBehaviour
         if (imageLoad != null)
             imageLoad.enabled = true;
         loads = true;
+    }
+
+    public void ActivateHighscore()
+    {
+        disableInput = true;
+        GameObject.FindGameObjectWithTag("highscore_Menu").GetComponent<Canvas>().enabled = true;
+        List<GameObject> players = new List<GameObject>();
+        players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+        GameObject.FindGameObjectWithTag("scoreText1").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighScoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
+        GameObject.FindGameObjectWithTag("scoreText2").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighScoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
     }
 }
