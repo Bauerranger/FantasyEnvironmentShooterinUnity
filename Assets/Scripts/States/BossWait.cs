@@ -27,7 +27,7 @@ public class BossWait : IFSMState<EnemyController>
         if (e.isInBossfight == true)
         {
             string state = ("BossAttack");
-            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.playersInReach[0]);
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
         }
 
         if (e.health <= 0)

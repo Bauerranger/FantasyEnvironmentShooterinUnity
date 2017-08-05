@@ -64,11 +64,26 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     public void InflictDamage()
     {
-        if (playersInReach.Count > 0)
-            playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
-        foreach (GameObject hit in hitPlayerAnimations)
+        if (!isBoss)
         {
-            GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
+            if (playersInReach.Count > 0)
+                playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
+            foreach (GameObject hit in hitPlayerAnimations)
+            {
+                GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
+            }
+        }
+        if (isBoss)
+        {
+
+            foreach (GameObject player in playersInReach)
+            {
+                player.GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
+                foreach (GameObject hit in hitPlayerAnimations)
+                {
+                    GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
+                }
+            }
         }
     }
 
@@ -84,12 +99,19 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     public void BossAttack()
     {
-
+        foreach (GameObject player in playersInReach)
+        {
+            InflictDamage();
+        }
     }
 
     public void BigBossAttack()
     {
-        StartCoroutine(spawnParticles());
+        if (!attacks)
+        {
+            StartCoroutine(spawnParticles());
+            attacks = true;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -125,5 +147,6 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
             }
             yield return new WaitForSeconds(1);
         }
+        attacks = false;
     }
 }
