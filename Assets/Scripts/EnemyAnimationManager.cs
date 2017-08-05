@@ -86,7 +86,7 @@ public class EnemyAnimationManager : MonoBehaviour
     {
         if (!isJumping)
         {
-            animator.SetTrigger("Hop");
+            animator.SetBool("Hop", true);
             isJumping = true;
         }
     }
@@ -98,6 +98,8 @@ public class EnemyAnimationManager : MonoBehaviour
 
     public void JumpAnimationEnds()
     {
+
+        animator.SetBool("Hop", false);
         isJumping = false;
     }
 }

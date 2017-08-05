@@ -29,6 +29,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     public List<GameObject> projectilesForBossShot;
     public List<GameObject> effectsForBossShot;
+    public List<GameObject> effectsForBossDrop;
 
 
     void Awake()
@@ -102,6 +103,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         foreach (GameObject player in playersInReach)
         {
             InflictDamage();
+        }
+        foreach (GameObject effect in effectsForBossDrop)
+        {
+            GameObject dropEffect = Instantiate(effect, this.transform.position, this.transform.rotation);
         }
     }
 
