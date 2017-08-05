@@ -9,5 +9,12 @@ public class NetworkEnemySpawn : MonoBehaviour {
         enemySpawns.AddRange(GetComponentsInChildren<EnemySpawn>());
 	}
 
+    private void OnTriggerEnter(Collider other)
+    {
+        foreach (EnemySpawn spawn in enemySpawns)
+        {
+            spawn.SpawnEnemy();
+        }
+    }
 
 }

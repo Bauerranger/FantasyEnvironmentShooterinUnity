@@ -6,7 +6,7 @@ public class EnemySpawn : MonoBehaviour
 {
     public GameObject enemy;
     public Transform firstWayPoint;
-    void SpawnEnemy()
+    public void SpawnEnemy()
             {
                 GameObject spawnedEnemy = Instantiate(enemy, this.transform.position, Quaternion.identity) as GameObject;
         if (firstWayPoint != null)
