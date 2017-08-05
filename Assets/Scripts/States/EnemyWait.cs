@@ -28,7 +28,7 @@ public class EnemyWait : IFSMState<EnemyController>
     {
         if (e.playersInReach.Count > 0)
         {
-            string state = ("EnemyChase");
+            string state = ("EnemyAttack");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.playersInReach[0]);
         }
 

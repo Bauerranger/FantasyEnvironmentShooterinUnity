@@ -26,7 +26,7 @@ public class NetworkShootBehaviors : NetworkBehaviour
     [Space(15)]
 
     [SerializeField]
-    private Transform ShootStartPoint;
+    public Transform ShootStartPoint;
     private Transform ShotTargetPoint;
     private GameObject player;
     public float durationOfPowerUp = 0;

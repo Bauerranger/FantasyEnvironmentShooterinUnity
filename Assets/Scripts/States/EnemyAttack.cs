@@ -20,6 +20,7 @@ public class EnemyAttack : IFSMState<EnemyController>
     public void Enter(EnemyController e)
     {
         agent = e.GetComponent<NavMeshAgent>();
+        Debug.Log("Attack");
     }
 
     public void Exit(EnemyController e)
@@ -32,15 +33,17 @@ public class EnemyAttack : IFSMState<EnemyController>
     {
         agent.destination = attackedPlayer.transform.position;
 
-        if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
+        if (e.usesRangedWeapons && e.playersInReach.Count == 0)
         {
-            if (e.usesRangedWeapons)
+            string state = ("EnemyWait");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
+        }
+
+        if (!e.usesRangedWeapons)
+        {
+            if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
             {
-                string state = ("EnemyWait");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
-            }
-            else
-            {
+
                 string state = ("EnemyPatrol");
                 e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
             }

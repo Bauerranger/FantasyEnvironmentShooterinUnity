@@ -8,6 +8,8 @@ public class NetworkEnemyManager : NetworkBehaviour
 {
     [SerializeField]
     private List<GameObject> deathParticles = new List<GameObject>();
+    [SerializeField]
+    private ShotBase shotPrefab;
 
 
     public void ProxyCommandTakeDamage(int damageTaken, GameObject player)
@@ -91,6 +93,33 @@ public class NetworkEnemyManager : NetworkBehaviour
             GameObject spawnedDeathParticles = Instantiate(particle, this.gameObject.transform.position, Quaternion.identity);
         }
         Destroy(this.gameObject);
+    }
+
+    public void ProxyCommandShootProjectile()
+    {
+        if (gameObject.GetComponent<EnemyController>().playersInReach.Count > 0)
+        {
+            Vector3 target = gameObject.GetComponent<EnemyController>().playersInReach[0].GetComponent<NetworkShootBehaviors>().ShootStartPoint.position;
+            Cmd_ShootProjectile(target);
+        }
+    }
+
+    [Command]
+    void Cmd_ShootProjectile(Vector3 target)
+    {
+        Vector3 shotStartPoint = this.transform.position + new Vector3(0f, 1f, 0f);
+        Quaternion rotation = Quaternion.LookRotation((target - shotStartPoint).normalized, Vector3.up);
+        Rpc_ShootProjectile(shotStartPoint, rotation);
+    }
+
+    [ClientRpc]
+    void Rpc_ShootProjectile(Vector3 shotStartPoint, Quaternion rotation)
+    {
+        if (shotPrefab)
+        {
+            ShotBase shotScript = Instantiate(shotPrefab, shotStartPoint, rotation);
+            shotScript.Setup(shotStartPoint, rotation, this.gameObject);
+        }
     }
 }
 

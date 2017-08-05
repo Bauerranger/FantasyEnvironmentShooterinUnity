@@ -7,8 +7,6 @@ public class NetworkPlayerController : NetworkBehaviour
 {
     public bool dies = false;
     public bool isDead = false;
-    private int playerNumber;
-    public string playerName;
     [SerializeField]
     private float cursorDistance = 3.00f;
     [SerializeField]
@@ -53,9 +51,6 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             return;
         }
-        GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerTwo>().countPlayers++;
-        playerNumber = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerTwo>().countPlayers;
-        playerName = ("Player " + (playerNumber));
         cameraMover = GameObject.FindGameObjectWithTag("CameraMover");
         cameraMover.transform.position = new Vector3(characterRigidbody.transform.position.x + cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         cameraMover.transform.rotation = Quaternion.Euler(cameraAngle);
@@ -350,6 +345,8 @@ public class NetworkPlayerController : NetworkBehaviour
             startJump = false;
         }
     }
+
+
 
     private void OnDisable()
     {

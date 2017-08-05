@@ -14,7 +14,9 @@ public class NormalShot : ShotBase
     [SerializeField]
     private List<GameObject> hitEnemyAnimations = new List<GameObject>();
     [SerializeField]
-    private List<GameObject> hitEnvitonmentAnimations = new List<GameObject>();
+    private List<GameObject> hitEnvironmentAnimations = new List<GameObject>();
+    [SerializeField]
+    private List<GameObject> hitPlayerAnimations = new List<GameObject>();
 
     void Start()
     {
@@ -31,9 +33,16 @@ public class NormalShot : ShotBase
                 GameObject spawnedParticle = Instantiate(hit, this.transform.position, Quaternion.identity) as GameObject;
             }
         }
+        else if (collision.gameObject.tag == "Player")
+        {
+            foreach (GameObject hit in hitPlayerAnimations)
+            {
+                GameObject spawnedParticle = Instantiate(hit, this.transform.position, Quaternion.identity) as GameObject;
+            }
+        }
         else
         {
-            foreach (GameObject hit in hitEnvitonmentAnimations)
+            foreach (GameObject hit in hitEnvironmentAnimations)
             {
                 GameObject spawnedParticle = Instantiate(hit, this.transform.position, Quaternion.identity) as GameObject;
             }
@@ -49,7 +58,11 @@ public class NormalShot : ShotBase
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(shotDamage, player);
         }
-        
+
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.GetComponent<NetworkPlayerHealth>().ReceiveDamage(shotDamage);
+        }
     }
 
     private void OnTriggerExit(Collider other)

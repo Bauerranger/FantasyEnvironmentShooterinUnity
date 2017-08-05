@@ -32,7 +32,39 @@ public class EnemyAnimationManager : MonoBehaviour
     {
         if (!isAttacking)
         {
-            animator.SetTrigger("Melee Attack 01");
+            if (!GetComponent<EnemyController>().usesRangedWeapons)
+            {
+                float random = Random.Range(0, 3);
+                if (random >= 0 && random < 1)
+                    animator.SetTrigger("Melee Attack 01");
+                if (random >= 1 && random < 2)
+                    animator.SetTrigger("Melee Attack 02");
+                if (random >= 2 && random < 4)
+                    animator.SetTrigger("Melee Attack 03");
+            }
+            if (GetComponent<EnemyController>().usesRangedWeapons)
+            {
+                if (GetComponent<EnemyController>().isMage)
+                {
+                    float random = Random.Range(0, 3);
+                    if (random >= 0 && random < 1)
+                        animator.SetTrigger("Melee Attack");
+                    if (random >= 1 && random < 2)
+                        animator.SetTrigger("Cast Spell 01");
+                    if (random >= 2 && random < 4)
+                        animator.SetTrigger("Cast Spell 02");
+                }
+                else
+                {
+                    float random = Random.Range(0, 3);
+                    if (random >= 0 && random < 1)
+                        animator.SetTrigger("Melee Attack 01");
+                    if (random >= 1 && random < 2)
+                        animator.SetTrigger("Melee Attack 02");
+                    if (random >= 2 && random < 4)
+                        animator.SetTrigger("Throw Kunai");
+                }
+            }
             isAttacking = true;
         }
     }

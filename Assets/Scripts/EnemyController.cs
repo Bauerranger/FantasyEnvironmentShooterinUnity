@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class EnemyController : StatefulMonoBehaviour<EnemyController>
 {
     public bool usesRangedWeapons;
+    public bool isMage;
     public bool dead;
     public Transform currentWaypoint;
     public int maximumAttackDistance = 8;
