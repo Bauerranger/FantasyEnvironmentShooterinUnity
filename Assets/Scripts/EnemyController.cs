@@ -20,8 +20,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public List<GameObject> playersInReach = new List<GameObject>();
     public bool attacks = false;
     public bool killedPlayer = false;
+    public List<GameObject> hitPlayerAnimations;
 
-    void Awake()
+void Awake()
     {
         oldHealth = health;
         fsm = new FSM<EnemyController>();
@@ -49,6 +50,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     {
         if(playersInReach.Count > 0)
         playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
+        foreach (GameObject hit in hitPlayerAnimations)
+        {
+            GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0,1.5f,0)), Quaternion.identity) as GameObject;
+        }
     }
 
     void SelfDestruct()

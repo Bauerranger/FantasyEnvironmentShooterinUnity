@@ -220,22 +220,37 @@ public class NetworkPlayerController : NetworkBehaviour
 
     void ShotPointer()
     {
+        Cursor.visible = true;
         Plane playerPlane = new Plane(transform.right, ShotStartingPoint.position);
         float outEnterPoint = 0.0f;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        playerPlane.Raycast(ray, out outEnterPoint);
-        Vector3 mouseWorldPosition = ray.GetPoint(outEnterPoint);
-
-        Vector3 towardsMouse = (mouseWorldPosition - ShotStartingPoint.position).normalized;
-        float angle = Mathf.Acos(Vector3.Dot(towardsMouse, transform.forward)) * Mathf.Rad2Deg;
-
-        if (angle >= 90)
+        bool targetFound = false;
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 100))
         {
-            Vector3 cachedForward = transform.forward;
-            Vector3.OrthoNormalize(ref cachedForward, ref towardsMouse);
+            if (hit.transform.tag == "Enemy")
+            {
+                ShotTargetPoint.position = hit.transform.position + new Vector3(0,1.8f,0);
+                targetFound = true;
+            }
         }
 
-        ShotTargetPoint.position = ShotStartingPoint.position + towardsMouse * cursorDistance;
+        if (!targetFound)
+        {
+            playerPlane.Raycast(ray, out outEnterPoint);
+            Vector3 mouseWorldPosition = ray.GetPoint(outEnterPoint);
+
+            Vector3 towardsMouse = (mouseWorldPosition - ShotStartingPoint.position).normalized;
+            float angle = Mathf.Acos(Vector3.Dot(towardsMouse, transform.forward)) * Mathf.Rad2Deg;
+
+            if (angle >= 90)
+            {
+                Vector3 cachedForward = transform.forward;
+                Vector3.OrthoNormalize(ref cachedForward, ref towardsMouse);
+            }
+
+            ShotTargetPoint.position = ShotStartingPoint.position + towardsMouse * cursorDistance;
+        }
     }
 
     public void SpawnShot()

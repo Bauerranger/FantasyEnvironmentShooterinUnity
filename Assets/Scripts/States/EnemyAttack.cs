@@ -33,7 +33,7 @@ public class EnemyAttack : IFSMState<EnemyController>
     {
         agent.destination = attackedPlayer.transform.position;
 
-        if (e.usesRangedWeapons && e.playersInReach.Count == 0 || e.killedPlayer == true)
+        if (e.usesRangedWeapons && e.playersInReach.Count == 0)
         {
             string state = ("EnemyWait");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
