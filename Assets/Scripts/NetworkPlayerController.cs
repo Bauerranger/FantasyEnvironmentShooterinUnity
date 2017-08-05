@@ -211,7 +211,7 @@ public class NetworkPlayerController : NetworkBehaviour
     [Command]
     void Cmd_Attack()
     {
-        if (attackAnimationIsDone)
+        if (attackAnimationIsDone && !dies)
         {
             attackAnimationIsDone = false;
             animator.SetTrigger("Melee Attack");

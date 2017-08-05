@@ -22,9 +22,9 @@ public class GameManagerScript : MonoBehaviour
         {
             foreach (GameObject player in players)
             {
-                if (!player.GetComponent<NetworkPlayerController>().isDead)
+                if (player.GetComponent<NetworkPlayerController>() != null && !player.GetComponent<NetworkPlayerController>().isDead)
                     return;
-                if (player.GetComponent<NetworkPlayerController>().isDead)
+                if (player.GetComponent<NetworkPlayerController>() != null && player.GetComponent<NetworkPlayerController>().isDead && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
             }
         }

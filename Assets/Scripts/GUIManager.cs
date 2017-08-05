@@ -130,7 +130,6 @@ public class GUIBehavior : MonoBehaviour
         if (!menuOpened)
         {
             EventManager.menuMethods -= TurnOffMenu;
-            Cursor.visible = true;
             EventManager.menuMethods += TurnOnMenu;
             menuOpened = true;
         }
@@ -141,7 +140,6 @@ public class GUIBehavior : MonoBehaviour
         if (menuOpened)
         {
             EventManager.menuMethods -= TurnOnMenu;
-            Cursor.visible = false;
             EventManager.menuMethods += TurnOffMenu;
             menuOpened = false;
         }
