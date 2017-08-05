@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class StartBossfight : MonoBehaviour {
 
+    public GameObject gameManager;
+    public GameObject boss;
+
     private void OnTriggerExit(Collider other)
     {
-        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().inBossfight = true;
+        gameManager.GetComponent<GameManagerScript>().inBossfight = true;
+        boss.GetComponent<EnemyController>().isInBossfight = true;
         GetComponent<BoxCollider>().enabled = true;
     }
 }

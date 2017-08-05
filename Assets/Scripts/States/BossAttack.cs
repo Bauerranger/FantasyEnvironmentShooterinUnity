@@ -7,8 +7,8 @@ public class BossAttack : IFSMState<EnemyController>
 {
     private GameObject attackedPlayer;
     private NavMeshAgent agent;
-    static readonly EnemyPatrol instance = new EnemyPatrol();
-    public static EnemyPatrol Instance
+    static readonly BossAttack instance = new BossAttack();
+    public static BossAttack Instance
     {
         get { return instance; }
     }

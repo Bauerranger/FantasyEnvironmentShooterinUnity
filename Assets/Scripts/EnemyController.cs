@@ -6,7 +6,8 @@ using System.Collections;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyController : StatefulMonoBehaviour<EnemyController>
 {
-    public bool isBoss = false;
+    public bool isBoss;
+    public bool isInBossfight;
     public bool usesRangedWeapons;
     public bool isMage;
     public bool dead;
@@ -41,9 +42,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         fsm = new FSM<EnemyController>();
         if (isBoss)
             fsm.Configure(this, new BossWait());
-        if (!usesRangedWeapons)
+        if (!usesRangedWeapons && !isBoss)
             fsm.Configure(this, new EnemyPatrol());
-        if (usesRangedWeapons)
+        if (usesRangedWeapons && !isBoss)
             fsm.Configure(this, new EnemyWait());
     }
 

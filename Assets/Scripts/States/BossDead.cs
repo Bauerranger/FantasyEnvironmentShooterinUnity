@@ -9,8 +9,8 @@ public class BossDead : IFSMState<EnemyController>
     private Animator animator;
     private bool dies = false;
     private NavMeshAgent agent;
-    static readonly EnemyDead instance = new EnemyDead();
-    public static EnemyDead Instance
+    static readonly BossDead instance = new BossDead();
+    public static BossDead Instance
     {
         get { return instance; }
     }

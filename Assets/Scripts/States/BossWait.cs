@@ -7,16 +7,14 @@ public class BossWait : IFSMState<EnemyController>
 {
     private NavMeshAgent agent;
     private List<GameObject> players = new List<GameObject>();
-    static readonly EnemyPatrol instance = new EnemyPatrol();
-    private int seeingDistance;
-    public static EnemyPatrol Instance
+    static readonly BossWait instance = new BossWait();
+    public static BossWait Instance
     {
         get { return instance; }
     }
 
     public void Enter(EnemyController e)
     {
-        seeingDistance = e.seeingDistance;
         agent = e.GetComponent<NavMeshAgent>();
     }
 
@@ -26,7 +24,7 @@ public class BossWait : IFSMState<EnemyController>
 
     public void Reason(EnemyController e)
     {
-        if (GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().inBossfight)
+        if (e.isInBossfight == true)
         {
             string state = ("BossAttack");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.playersInReach[0]);
@@ -42,5 +40,6 @@ public class BossWait : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
+        agent.velocity = Vector3.zero;
     }
 }

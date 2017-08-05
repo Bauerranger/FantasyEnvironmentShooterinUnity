@@ -5,10 +5,9 @@ using UnityEngine.AI;
 
 public class BossStage3 : IFSMState<EnemyController>
 {
-    private GameObject attackedPlayer;
     private NavMeshAgent agent;
-    static readonly EnemyPatrol instance = new EnemyPatrol();
-    public static EnemyPatrol Instance
+    static readonly BossStage3 instance = new BossStage3();
+    public static BossStage3 Instance
     {
         get { return instance; }
     }
@@ -29,7 +28,7 @@ public class BossStage3 : IFSMState<EnemyController>
         if (e.health <= 0)
         {
             string state = ("BossDead");
-            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
         }
     }
 
