@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class GameManagerScript : MonoBehaviour
 {
-
+    public AudioClip Bossfight;
+    public AudioClip Won;
+    public AudioClip Lost;
     private List<GameObject> players = new List<GameObject>();
-
+    public bool inBossfight;
+    public bool bossIsDead;
     void Start()
     {
     }
@@ -27,6 +30,25 @@ public class GameManagerScript : MonoBehaviour
                 if (player.GetComponent<NetworkPlayerController>() != null && player.GetComponent<NetworkPlayerController>().isDead && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
             }
+            GetComponent<AudioSource>().clip = Lost;
+            GetComponent<AudioSource>().Play();
+        }
+        if (bossIsDead)
+        {
+            if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
+                GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
+            foreach (GameObject player in players)
+            {
+
+            }
+            GetComponent<AudioSource>().clip = Won;
+            GetComponent<AudioSource>().Play();
+        }
+
+        if (inBossfight)
+        {
+            GetComponent<AudioSource>().clip = Bossfight;
+            GetComponent<AudioSource>().Play();
         }
     }
 }
