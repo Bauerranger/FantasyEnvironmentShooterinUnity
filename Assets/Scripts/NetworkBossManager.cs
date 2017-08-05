@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 
-public class NetworkBossManager : NetworkEnemyManager
+public class NetworkEnemyManager : NetworkBehaviour
 {
     [SerializeField]
     private List<GameObject> deathParticles = new List<GameObject>();

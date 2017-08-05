@@ -31,7 +31,7 @@ public class GameManagerScript : MonoBehaviour
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
             }
             GetComponent<AudioSource>().clip = Lost;
-            GetComponent<AudioSource>().Play();
+            AudioSource.PlayClipAtPoint(this.Lost, transform.position);
         }
         if (bossIsDead)
         {
@@ -42,13 +42,13 @@ public class GameManagerScript : MonoBehaviour
 
             }
             GetComponent<AudioSource>().clip = Won;
-            GetComponent<AudioSource>().Play();
+            AudioSource.PlayClipAtPoint(this.Won, transform.position);
         }
 
         if (inBossfight)
         {
             GetComponent<AudioSource>().clip = Bossfight;
-            GetComponent<AudioSource>().Play();
+            AudioSource.PlayClipAtPoint(this.Bossfight, transform.position);
         }
     }
 }

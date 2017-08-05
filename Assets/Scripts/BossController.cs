@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class BossController : EnemyController
+public class EnemyController : StatefulMonoBehaviour<EnemyController>
 {
     public bool usesRangedWeapons;
     public bool isMage;
@@ -34,7 +34,7 @@ void Awake()
 
     public void TakeDamage(int damageTaken, GameObject player)
     {
-        //GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
+        GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
     }
 
     public void UpdatePlayerDead()
