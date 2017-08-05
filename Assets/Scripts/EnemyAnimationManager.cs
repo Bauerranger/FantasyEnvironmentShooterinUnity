@@ -9,6 +9,7 @@ public class EnemyAnimationManager : MonoBehaviour
     private Animator animator;
     private NavMeshAgent agent;
     private bool isAttacking = false;
+    private bool isJumping = false;
 
     void Start()
     {
@@ -18,13 +19,16 @@ public class EnemyAnimationManager : MonoBehaviour
 
     void Update()
     {
-        if (!agent.velocity.Equals(Vector3.zero))
+        if (!GetComponent<EnemyController>().isBoss)
         {
-            animator.SetBool("Run", true);
-        }
-        else
-        {
-            animator.SetBool("Run", false);
+            if (!agent.velocity.Equals(Vector3.zero))
+            {
+                animator.SetBool("Run", true);
+            }
+            else
+            {
+                animator.SetBool("Run", false);
+            }
         }
     }
 
@@ -69,8 +73,31 @@ public class EnemyAnimationManager : MonoBehaviour
         }
     }
 
+    public void BigBossAttack()
+    {
+        if (!isAttacking)
+        {
+            animator.SetTrigger("Take Damage");
+            isAttacking = true;
+        }
+    }
+
+    public void BigBossJump()
+    {
+        if (!isJumping)
+        {
+            animator.SetTrigger("Hop");
+            isJumping = true;
+        }
+    }
+
     public void AttackAnimationEnds()
     {
         isAttacking = false;
+    }
+
+    public void JumpAnimationEnds()
+    {
+        isJumping = false;
     }
 }

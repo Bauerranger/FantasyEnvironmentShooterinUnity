@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class BossController : EnemyController
+public class EnemyController : StatefulMonoBehaviour<EnemyController>
 {
+    public bool isBoss = false;
     public bool usesRangedWeapons;
     public bool isMage;
     public bool dead;
@@ -21,11 +23,24 @@ public class BossController : EnemyController
     public bool attacks = false;
     public bool killedPlayer = false;
     public List<GameObject> hitPlayerAnimations;
+    public Transform[] BossWayPoints;
+    public Transform[] BossShotSpawns;
 
-void Awake()
+    public List<GameObject> projectilesForBossShot;
+    public List<GameObject> effectsForBossShot;
+
+
+    void Awake()
     {
         oldHealth = health;
+
+    }
+
+    private void Start()
+    {
         fsm = new FSM<EnemyController>();
+        if (isBoss)
+            fsm.Configure(this, new BossWait());
         if (!usesRangedWeapons)
             fsm.Configure(this, new EnemyPatrol());
         if (usesRangedWeapons)
@@ -34,12 +49,12 @@ void Awake()
 
     public void TakeDamage(int damageTaken, GameObject player)
     {
-        //GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
+        GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
     }
 
     public void UpdatePlayerDead()
     {
-        if (playersInReach.Count > 0 && playersInReach[0].GetComponent<NetworkPlayerHealth>().health  < 0)
+        if (playersInReach.Count > 0 && playersInReach[0].GetComponent<NetworkPlayerHealth>().health < 0)
         {
             playersInReach.Remove(playersInReach[0]);
             killedPlayer = true;
@@ -48,11 +63,11 @@ void Awake()
 
     public void InflictDamage()
     {
-        if(playersInReach.Count > 0)
-        playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
+        if (playersInReach.Count > 0)
+            playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
         foreach (GameObject hit in hitPlayerAnimations)
         {
-            GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0,1.5f,0)), Quaternion.identity) as GameObject;
+            GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
         }
     }
 
@@ -66,6 +81,16 @@ void Awake()
         attacks = false;
     }
 
+    public void BossAttack()
+    {
+
+    }
+
+    public void BigBossAttack()
+    {
+        StartCoroutine(spawnParticles());
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player" && other.GetComponent<NetworkPlayerHealth>().health > 0)
@@ -77,6 +102,27 @@ void Awake()
         if (other.tag == "Player")
         {
             playersInReach.Remove(other.gameObject);
+        }
+    }
+
+    IEnumerator spawnParticles()
+    {
+        foreach (Transform spawnPoint in BossShotSpawns)
+        {
+            float random = Random.Range(0, 3);
+            if (random >= 0 && random < 1)
+            {
+                GameObject bossShot = Instantiate(projectilesForBossShot[0], spawnPoint.position, spawnPoint.rotation);
+            }
+            else if (random >= 1 && random < 2)
+            {
+                GameObject bossShot = Instantiate(projectilesForBossShot[1], spawnPoint.position, spawnPoint.rotation);
+            }
+            else if (random >= 2 && random < 4)
+            {
+                GameObject bossShot = Instantiate(projectilesForBossShot[2], spawnPoint.position, spawnPoint.rotation);
+            }
+            yield return new WaitForSeconds(1);
         }
     }
 }

@@ -8,7 +8,7 @@ public class GameManagerScript : MonoBehaviour
     public AudioClip Won;
     public AudioClip Lost;
     private List<GameObject> players = new List<GameObject>();
-    public bool inBossfight;
+    public bool inBossfight = false;
     public bool bossIsDead;
     void Start()
     {
