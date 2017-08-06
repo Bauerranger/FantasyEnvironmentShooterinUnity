@@ -47,15 +47,7 @@ public class BossStage2 : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        agent.velocity = Vector3.zero;
-        if (!e.attacks)
-        {
             e.GetComponent<EnemyAnimationManager>().BigBossAttack();
-            e.attacks = true;
-        }
-        else
-        {
-            e.GetComponent<EnemyAnimationManager>().AttackAnimationEnds();
-        }
+
     }
 }

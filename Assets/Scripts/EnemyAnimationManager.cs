@@ -10,6 +10,7 @@ public class EnemyAnimationManager : MonoBehaviour
     private NavMeshAgent agent;
     private bool isAttacking = false;
     private bool isJumping = false;
+    private bool reset = true;
 
     void Start()
     {
@@ -75,10 +76,12 @@ public class EnemyAnimationManager : MonoBehaviour
 
     public void BigBossAttack()
     {
-        if (!isAttacking)
+        if (!isAttacking && reset)
         {
-            animator.SetTrigger("Take Damage");
+            animator.SetTrigger("Attack");
             isAttacking = true;
+            reset = false;
+            StartCoroutine(WaitForReset());
         }
     }
 
@@ -101,4 +104,11 @@ public class EnemyAnimationManager : MonoBehaviour
         animator.SetBool("Hop", false);
         isJumping = false;
     }
+
+    IEnumerator WaitForReset()
+    {
+        yield return new WaitForSeconds(2);
+        reset = true;
+    }
+
 }

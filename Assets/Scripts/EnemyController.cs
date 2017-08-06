@@ -80,9 +80,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
             foreach (GameObject player in playersInReach)
             {
                 player.GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
+                player.GetComponent<Animator>().SetTrigger("Take Damage");
                 foreach (GameObject hit in hitPlayerAnimations)
                 {
-                    GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
+                    GameObject spawnedParticle = Instantiate(hit, (player.transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
                 }
             }
         }
@@ -110,13 +111,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
-    public void BigBossAttack()
+    public void BigBossAttackSpawn()
     {
-        if (!attacks)
-        {
             StartCoroutine(spawnParticles());
-            attacks = true;
-        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -137,6 +134,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     {
         foreach (Transform spawnPoint in BossShotSpawns)
         {
+            foreach (GameObject effect in effectsForBossShot)
+            {
+                GameObject effectAtSpawn = Instantiate(effect, spawnPoint.position, spawnPoint.rotation);
+            }
             float random = Random.Range(0, 3);
             if (random >= 0 && random < 1)
             {
@@ -150,8 +151,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
             {
                 GameObject bossShot = Instantiate(projectilesForBossShot[2], spawnPoint.position, spawnPoint.rotation);
             }
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.1f);
         }
-        attacks = false;
     }
 }
