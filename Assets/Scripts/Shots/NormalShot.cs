@@ -6,12 +6,11 @@ using UnityEngine.Networking;
 public class NormalShot : ShotBase
 {
     public int shotDamage = 25;
-    [SerializeField]
-    private float FireForce = 1000.0f;
+    public float FireForce = 1000.0f;
     public List<GameObject> hitEnemyAnimations = new List<GameObject>();
     public List<GameObject> hitEnvironmentAnimations = new List<GameObject>();
     public List<GameObject> hitPlayerAnimations = new List<GameObject>();
-    private Rigidbody shotRigidbody;
+    public Rigidbody shotRigidbody;
 
     void Start()
     {
