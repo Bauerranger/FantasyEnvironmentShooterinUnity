@@ -34,8 +34,19 @@ public class NetworkBattleSpawn : NetworkBehaviour
         spawnedEnemy.GetComponent<EnemyController>().spawnedBy = spawnFrom;
         if (firstWayPoint)
         {
-            spawnedEnemy.GetComponent<EnemyController>().currentWaypoint = firstWayPoint;
+            Cmd_ChangeWayPoint(spawnedEnemy);
         }
-        Destroy(this.gameObject);
+    }
+
+    [Command]
+    void Cmd_ChangeWayPoint(GameObject spawnedEnemy)
+    {
+        Rpc_ChangeWayPoint(spawnedEnemy);
+    }
+
+    [ClientRpc]
+    void Rpc_ChangeWayPoint(GameObject spawnedEnemy)
+    {
+        spawnedEnemy.GetComponent<EnemyController>().currentWaypoint = firstWayPoint;
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 public class ShotBase : MonoBehaviour
 {
+    [System.NonSerialized]
     public GameObject player;
     public void Setup(Vector3 initialPosition, Quaternion initialRotation, GameObject playerShooting)
     {
