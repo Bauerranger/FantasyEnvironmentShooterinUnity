@@ -25,9 +25,7 @@ public class BossDead : IFSMState<EnemyController>
 
     public void Exit(EnemyController e)
     {
-        Debug.Log("stopped being Dead 'Doh'");
-        agent.enabled = true;
-        e.GetComponent<Collider>().enabled = true;
+        e.GetComponent<NetworkEnemyManager>().ProxyCommandDie();
     }
 
     public void Reason(EnemyController e)
@@ -37,6 +35,7 @@ public class BossDead : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().bossIsDead = true;
         PlayDeathAnimation();
         if (e.dead)
             e.GetComponent<NetworkEnemyManager>().ProxyCommandDie();

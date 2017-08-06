@@ -18,7 +18,7 @@ public class NetworkPlayerController : NetworkBehaviour
     private float addVelocity = 6;
     private float jumpHight = 8;
     private float smoothTime = 0.2f;
-    private float cameraDistance = -17f;
+    private float cameraDistance = -15f;
     private float cameraOffsetX = 5.5f;
     private float cameraOffsetY = 5f;
     private bool menuOpen = false;

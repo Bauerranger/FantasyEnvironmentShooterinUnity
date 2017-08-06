@@ -8,8 +8,11 @@ public class GameManagerScript : MonoBehaviour
     public AudioClip Won;
     public AudioClip Lost;
     private List<GameObject> players = new List<GameObject>();
+    [System.NonSerialized]
     public bool inBossfight = false;
+    [System.NonSerialized]
     public bool bossIsDead = false;
+    public Transform[] WinPosition;
     void Start()
     {
     }
@@ -18,13 +21,7 @@ public class GameManagerScript : MonoBehaviour
     {
         if (bossIsDead)
         {
-            if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
-                GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
-            if (GetComponent<AudioSource>().clip != Won)
-            {
-                GetComponent<AudioSource>().clip = Won;
-                AudioSource.PlayClipAtPoint(this.Won, transform.position);
-            }
+            StartCoroutine(WaitForBossDeath());
         }
         if (inBossfight)
         {
@@ -44,11 +41,7 @@ public class GameManagerScript : MonoBehaviour
         {
             foreach (GameObject player in players)
             {
-                if (player.GetComponent<NetworkPlayerController>() != null && !player.GetComponent<NetworkPlayerController>().isDead)
-                {
-
-                }
-                else if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && player.GetComponent<NetworkPlayerController>().isDead)
+                if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && player.GetComponent<NetworkPlayerController>().isDead)
                 {
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
                     GetComponent<AudioSource>().clip = Lost;
@@ -56,9 +49,25 @@ public class GameManagerScript : MonoBehaviour
                 }
             }
         }
+    }
 
-
-
-
+    IEnumerator WaitForBossDeath()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
+            GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
+        if (GetComponent<AudioSource>().clip != Won)
+        {
+            GetComponent<AudioSource>().clip = Won;
+            AudioSource.PlayClipAtPoint(this.Won, transform.position);
+        }
+        int count = 0;
+        foreach (GameObject player in players)
+        {
+            player.transform.position = WinPosition[count].position;
+            player.transform.rotation = WinPosition[count].rotation;
+            player.GetComponent<Animator>().SetBool("Talking", true);
+            count++;
+        }
     }
 }
