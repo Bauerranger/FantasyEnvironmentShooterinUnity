@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
-public class AddToHighscore : MonoBehaviour
-{
+public class AddHealth : MonoBehaviour {
     [SerializeField]
-    private int addScore = 3;
+    private int addLife = 25;
     [SerializeField]
     private GameObject effect;
 
@@ -14,7 +12,7 @@ public class AddToHighscore : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ProxyCommandAddScore(other.GetComponent<NetworkIdentity>().netId.ToString(), addScore);
+            other.GetComponent<NetworkPlayerHealth>().health += addLife;
             GameObject spawnedParticle = Instantiate(effect, this.gameObject.transform.position, Quaternion.identity);
             spawnedParticle.GetComponent<SelfDestruct>().selfdestruct_in = 0.5f;
             Destroy(this.gameObject);
