@@ -48,8 +48,18 @@ public class NetworkShootBehaviors : NetworkBehaviour
     {
         if (oldPowerUpNo != powerUpNo)
         {
+            if (ammoOfPowerUp <= 0)
+            {
+                powerUpNo = 0;
+            }
             switch (powerUpNo)
             {
+                case 0:
+                    EventManager.shotMethods += ProxyCommandNormalShot;
+                    EventManager.shotMethods -= ProxyCommandThroughShot;
+                    EventManager.shotMethods -= ProxyCommandMortarShot;
+                    EventManager.shotMethods -= ProxyCommandRapidShot;
+                    break;
                 case 1:
                     EventManager.shotMethods -= ProxyCommandNormalShot;
                     EventManager.shotMethods += ProxyCommandThroughShot;
@@ -107,6 +117,7 @@ public class NetworkShootBehaviors : NetworkBehaviour
     [Command]
     void CmdShoot(shotType type, Vector3 targetWorldPosition)
     {
+        ammoOfPowerUp--;
         Quaternion rotation = Quaternion.LookRotation((targetWorldPosition - ShootStartPoint.position).normalized, Vector3.up);
         Rpc_spawnShot(type, ShootStartPoint.position, rotation);
     }
