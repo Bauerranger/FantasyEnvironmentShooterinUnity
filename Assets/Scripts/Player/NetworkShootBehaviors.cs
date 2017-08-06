@@ -29,7 +29,11 @@ public class NetworkShootBehaviors : NetworkBehaviour
     public Transform ShootStartPoint;
     private Transform ShotTargetPoint;
     private GameObject player;
-    public float durationOfPowerUp = 0;
+    [System.NonSerialized]
+    public float ammoOfPowerUp = 0;
+    [System.NonSerialized]
+    public int powerUpNo = 0;
+    private int oldPowerUpNo = 0;
 
     void Start()
     {
@@ -42,6 +46,37 @@ public class NetworkShootBehaviors : NetworkBehaviour
 
     private void Update()
     {
+        if (oldPowerUpNo != powerUpNo)
+        {
+            switch (powerUpNo)
+            {
+                case 1:
+                    EventManager.shotMethods -= ProxyCommandNormalShot;
+                    EventManager.shotMethods += ProxyCommandThroughShot;
+                    EventManager.shotMethods -= ProxyCommandMortarShot;
+                    EventManager.shotMethods -= ProxyCommandRapidShot;
+                    break;
+                case 2:
+                    EventManager.shotMethods -= ProxyCommandNormalShot;
+                    EventManager.shotMethods -= ProxyCommandThroughShot;
+                    EventManager.shotMethods += ProxyCommandMortarShot;
+                    EventManager.shotMethods -= ProxyCommandRapidShot;
+                    break;
+                case 3:
+                    EventManager.shotMethods -= ProxyCommandNormalShot;
+                    EventManager.shotMethods -= ProxyCommandThroughShot;
+                    EventManager.shotMethods -= ProxyCommandMortarShot;
+                    EventManager.shotMethods += ProxyCommandRapidShot;
+                    break;
+                default:
+                    EventManager.shotMethods += ProxyCommandNormalShot;
+                    EventManager.shotMethods -= ProxyCommandThroughShot;
+                    EventManager.shotMethods -= ProxyCommandMortarShot;
+                    EventManager.shotMethods -= ProxyCommandRapidShot;
+                    break;
+            }
+            oldPowerUpNo = powerUpNo;
+        }
         if (player == null)
             player = this.gameObject;
         if (!isLocalPlayer)
