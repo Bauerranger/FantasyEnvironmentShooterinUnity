@@ -48,7 +48,7 @@ public class GameManagerScript : MonoBehaviour
                 {
 
                 }
-                else if (player.GetComponent<NetworkPlayerController>() != null && player.GetComponent<NetworkPlayerController>().isDead && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
+                else if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && player.GetComponent<NetworkPlayerController>().isDead)
                 {
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
                     GetComponent<AudioSource>().clip = Lost;

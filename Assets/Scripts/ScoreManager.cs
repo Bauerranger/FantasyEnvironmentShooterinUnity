@@ -40,7 +40,6 @@ public class ScoreManager : NetworkBehaviour
             }
         }
         highscore[player] += score;
-        Debug.Log("New score for " + player + " is " + highscore[player]);
     }
 
     public void ActivateHighscore() //normally this would be in the GUIManager Script, but somehow I can not make any changes to the script anymore, since they do not compile somehow.

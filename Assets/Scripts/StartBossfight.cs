@@ -10,10 +10,12 @@ public class StartBossfight : MonoBehaviour {
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.tag != "Player")
+            return;
         gameManager.GetComponent<GameManagerScript>().inBossfight = true;
         boss.GetComponent<EnemyController>().isInBossfight = true;
         count++;
-        if (count >= 2)
-        GetComponent<BoxCollider>().enabled = true;
+        if (count >= GameObject.FindGameObjectsWithTag("Player").Length)
+            GetComponent<BoxCollider>().enabled = true;
     }
 }

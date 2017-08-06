@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class BossAttack : IFSMState<EnemyController>
 {
+    private int nextStageThreshold = 1000;
     private GameObject attackedPlayer;
     private NavMeshAgent agent;
     static readonly BossAttack instance = new BossAttack();
@@ -17,6 +18,7 @@ public class BossAttack : IFSMState<EnemyController>
     {
         agent = e.GetComponent<NavMeshAgent>();
         agent.destination = e.currentWaypoint.position;
+        e.GetComponent<EnemyAnimationManager>().BigBossJump();
     }
 
     public void Exit(EnemyController e)
@@ -28,7 +30,7 @@ public class BossAttack : IFSMState<EnemyController>
     public void Reason(EnemyController e)
     {
 
-        if (e.health <= 400)
+        if (e.health <= nextStageThreshold)
         {
             if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
             {
@@ -47,6 +49,5 @@ public class BossAttack : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        e.GetComponent<EnemyAnimationManager>().BigBossJump();
     }
 }

@@ -98,7 +98,6 @@ public class EnemyAnimationManager : MonoBehaviour
 
     public void JumpAnimationEnds()
     {
-
         animator.SetBool("Hop", false);
         isJumping = false;
     }

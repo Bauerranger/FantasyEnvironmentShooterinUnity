@@ -27,7 +27,6 @@ public class NetworkEnemyManager : NetworkBehaviour
     void Rpc_TakeDamage(int damageTaken, string player)
     {
         this.GetComponent<EnemyController>().health -= damageTaken;
-        Debug.Log("My Life is now " + this.GetComponent<EnemyController>().health);
         GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ProxyCommandAddScore(player, damageTaken);
         if (this.GetComponent<EnemyController>().health <= 0)
             GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ProxyCommandAddScore(player, this.GetComponent<EnemyController>().deathScore);
