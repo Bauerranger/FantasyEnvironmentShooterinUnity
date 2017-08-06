@@ -5,18 +5,13 @@ using UnityEngine.Networking;
 
 public class NormalShot : ShotBase
 {
-    [SerializeField]
-    private int shotDamage = 25;
+    public int shotDamage = 25;
     [SerializeField]
     private float FireForce = 1000.0f;
+    public List<GameObject> hitEnemyAnimations = new List<GameObject>();
+    public List<GameObject> hitEnvironmentAnimations = new List<GameObject>();
+    public List<GameObject> hitPlayerAnimations = new List<GameObject>();
     private Rigidbody shotRigidbody;
-
-    [SerializeField]
-    private List<GameObject> hitEnemyAnimations = new List<GameObject>();
-    [SerializeField]
-    private List<GameObject> hitEnvironmentAnimations = new List<GameObject>();
-    [SerializeField]
-    private List<GameObject> hitPlayerAnimations = new List<GameObject>();
 
     void Start()
     {
@@ -32,6 +27,7 @@ public class NormalShot : ShotBase
             {
                 GameObject spawnedParticle = Instantiate(hit, this.transform.position, Quaternion.identity) as GameObject;
             }
+            collision.gameObject.GetComponent<Animator>().SetTrigger("Take Damage");
         }
         else if (collision.gameObject.tag == "Player")
         {
@@ -39,6 +35,7 @@ public class NormalShot : ShotBase
             {
                 GameObject spawnedParticle = Instantiate(hit, this.transform.position, Quaternion.identity) as GameObject;
             }
+            collision.gameObject.GetComponent<Animator>().SetTrigger("Take Damage");
         }
         else
         {
