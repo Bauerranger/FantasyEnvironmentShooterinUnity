@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GameManagerScript : MonoBehaviour
+public class GameManagerScript : NetworkBehaviour
 {
     public AudioClip Bossfight;
     public AudioClip Won;
@@ -18,9 +19,6 @@ public class GameManagerScript : MonoBehaviour
     public bool bossIsDead = false;
     private bool bossCamActive = false;
     public Transform[] WinPosition;
-    void Start()
-    {
-    }
 
     void Update()
     {
@@ -62,6 +60,7 @@ public class GameManagerScript : MonoBehaviour
     }
     public void MakeScreenShake(float seconds)
     {
+        if (!isLocalPlayer)
         StartCoroutine(ScreenShakeLength(seconds));
     }
     

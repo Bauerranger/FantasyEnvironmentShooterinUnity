@@ -15,6 +15,8 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public bool isMage;
     [System.NonSerialized]
     public bool dead;
+    [System.NonSerialized]
+    public GameObject spawnedBy;
 
     [Space(15)]
 
@@ -108,6 +110,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     void SelfDestruct()
     {
+        spawnedBy.GetComponent<BattleManager>().enemysAlive.Remove(this.gameObject);
         dead = true;
     }
 
