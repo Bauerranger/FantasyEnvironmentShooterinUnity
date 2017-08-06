@@ -6,12 +6,22 @@ using System.Collections;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyController : StatefulMonoBehaviour<EnemyController>
 {
+    [System.NonSerialized]
+    public bool isInStage3;
     public bool isBoss;
+    [System.NonSerialized]
     public bool isInBossfight;
     public bool usesRangedWeapons;
     public bool isMage;
+    [System.NonSerialized]
     public bool dead;
+
+    [Space(15)]
+
     public Transform currentWaypoint;
+
+    [Space(15)]
+
     public int maximumAttackDistance = 8;
     public int seeingDistance = 10;
     public int maximumDistance = 8;
@@ -19,12 +29,18 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     private int oldHealth;
     public int deathScore = 25;
     public int enemyDamage = 5;
+    
+    [Space(15)]
+
+    [System.NonSerialized]
     public bool isPatroling = false;
+    [System.NonSerialized]
     public List<GameObject> playersInReach = new List<GameObject>();
+    [System.NonSerialized]
     public bool attacks = false;
+    [System.NonSerialized]
     public bool killedPlayer = false;
     public List<GameObject> hitPlayerAnimations;
-    public Transform[] BossWayPoints;
     public Transform[] BossShotSpawns;
 
     public List<GameObject> projectilesForBossShot;
@@ -153,5 +169,17 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
             }
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    public void DelayChangeState (string state, float waitTime)
+    {
+        StartCoroutine(DelayChangeStateEnum(state, waitTime));
+    }
+
+    IEnumerator DelayChangeStateEnum(string state, float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        string newState = (state);
+        GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, gameObject);
     }
 }

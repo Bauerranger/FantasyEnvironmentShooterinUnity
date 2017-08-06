@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class BossStage3 : IFSMState<EnemyController>
 {
+    private bool isJumping = false;
     private NavMeshAgent agent;
     static readonly BossStage3 instance = new BossStage3();
     public static BossStage3 Instance
@@ -34,16 +35,16 @@ public class BossStage3 : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        agent.velocity = Vector3.zero;
-        if (!e.attacks)
+        if (isJumping)
         {
-            e.GetComponent<EnemyAnimationManager>().PlayAttackAnimation();
-            e.attacks = true;
+            e.GetComponent<EnemyAnimationManager>().BigBossJump();
         }
-        else
+        if (agent.remainingDistance < 0.5f && e.currentWaypoint)
         {
-            e.GetComponent<EnemyAnimationManager>().AttackAnimationEnds();
+            e.currentWaypoint.GetComponent<WayPointGiver>().GiveWayPoint(e);
         }
+        if (e.currentWaypoint != null && e.currentWaypoint.position != agent.destination)
+            agent.destination = e.currentWaypoint.position;
     }
 }
 

@@ -76,10 +76,6 @@ public class NetworkEnemyManager : NetworkBehaviour
                 this.GetComponent<EnemyController>().ChangeState(new BossStage2());
                 break;
 
-            case "BossStage3":
-                this.GetComponent<EnemyController>().ChangeState(new BossStage3());
-                break;
-
             case "BossDead":
                 this.GetComponent<EnemyController>().ChangeState(new BossDead());
                 break;

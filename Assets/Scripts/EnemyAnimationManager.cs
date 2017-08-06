@@ -8,7 +8,8 @@ public class EnemyAnimationManager : MonoBehaviour
 
     private Animator animator;
     private NavMeshAgent agent;
-    private bool isAttacking = false;
+    [System.NonSerialized]
+    public bool isAttacking = false;
     private bool isJumping = false;
     private bool reset = true;
 

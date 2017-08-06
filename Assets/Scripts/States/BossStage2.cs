@@ -28,14 +28,9 @@ public class BossStage2 : IFSMState<EnemyController>
     public void Reason(EnemyController e)
     {
 
-        if (e.health <= nextStageThreshold)
+        if (e.health <= nextStageThreshold && !e.isInStage3)
         {
-            if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
-            {
-
-                string state = ("BossStage3");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
-            }
+                e.isInStage3 = true;
         }
 
         if (e.health <= 0)
@@ -43,11 +38,16 @@ public class BossStage2 : IFSMState<EnemyController>
             string state = ("BossDead");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, e.gameObject);
         }
+
+        if (e.isInStage3)
+        {
+            e.DelayChangeState("BossAttack", 4f);
+        }
     }
 
     public void Update(EnemyController e)
     {
             e.GetComponent<EnemyAnimationManager>().BigBossAttack();
-
     }
+
 }
