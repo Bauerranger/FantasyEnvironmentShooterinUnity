@@ -49,7 +49,13 @@ public class GameManagerScript : NetworkBehaviour
         {
             foreach (GameObject player in players)
             {
-                if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && player.GetComponent<NetworkPlayerController>().isDead)
+                int coundDead = 0;
+                foreach (GameObject playerDead in players)
+                {
+                    if (playerDead.GetComponent<NetworkPlayerController>().isDead)
+                        coundDead++;
+                }
+                if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && coundDead >= players.Count)
                 {
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
                     GetComponent<AudioSource>().clip = Lost;
@@ -61,9 +67,9 @@ public class GameManagerScript : NetworkBehaviour
     public void MakeScreenShake(float seconds)
     {
         if (!isLocalPlayer)
-        StartCoroutine(ScreenShakeLength(seconds));
+            StartCoroutine(ScreenShakeLength(seconds));
     }
-    
+
     IEnumerator ScreenShakeLength(float seconds)
     {
         if (cam1.activeInHierarchy)
@@ -92,7 +98,7 @@ public class GameManagerScript : NetworkBehaviour
         cam2.SetActive(true);
         bossCamActive = true;
     }
-    
+
     IEnumerator WaitForBossDeath()
     {
         yield return new WaitForSeconds(2);

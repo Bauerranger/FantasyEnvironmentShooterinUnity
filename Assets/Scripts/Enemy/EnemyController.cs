@@ -113,7 +113,8 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     void SelfDestruct()
     {
-        spawnedBy.GetComponent<BattleManager>().enemysAlive.Remove(this.gameObject);
+        if (spawnedBy.GetComponent<BattleManager>().enemysAlive.Count > 0 && spawnedBy.GetComponent<BattleManager>().enemysAlive.Contains(this.gameObject))
+            spawnedBy.GetComponent<BattleManager>().enemysAlive.Remove(this.gameObject);
         dead = true;
     }
 
