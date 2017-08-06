@@ -81,6 +81,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     public void InflictDamage()
     {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().MakeScreenShake(0.5f);
         if (!isBoss)
         {
             if (playersInReach.Count > 0)
@@ -130,6 +131,11 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public void BigBossAttackSpawn()
     {
             StartCoroutine(spawnParticles());
+    }
+
+    public void MakeScreenShake(float shakeTime)
+    {
+        GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().MakeScreenShake(shakeTime);
     }
 
     void OnTriggerEnter(Collider other)

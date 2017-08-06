@@ -45,9 +45,9 @@ public class ScoreManager : NetworkBehaviour
     public void ActivateHighscore() //normally this would be in the GUIManager Script, but somehow I can not make any changes to the script anymore, since they do not compile somehow.
     {
         GameObject.FindGameObjectWithTag("highscore_Menu").GetComponent<Canvas>().enabled = true;
-        if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore.Count > 0)
-        GameObject.FindGameObjectWithTag("scoreText1").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
-        if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore.Count > 1)
-            GameObject.FindGameObjectWithTag("scoreText2").GetComponentInChildren<Text>().text = (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().highscore[players[1].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
+        if (highscore.Count > 0)
+        GameObject.FindGameObjectWithTag("scoreText1").GetComponentInChildren<Text>().text = (highscore[players[0].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
+        if (highscore.Count > 1)
+            GameObject.FindGameObjectWithTag("scoreText2").GetComponentInChildren<Text>().text = (highscore[players[1].GetComponent<NetworkIdentity>().netId.ToString()].ToString());
         }
 }

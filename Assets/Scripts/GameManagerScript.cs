@@ -8,10 +8,15 @@ public class GameManagerScript : MonoBehaviour
     public AudioClip Won;
     public AudioClip Lost;
     private List<GameObject> players = new List<GameObject>();
+    public GameObject cam1;
+    public GameObject cam1noise;
+    public GameObject cam2;
+    public GameObject cam2noise;
     [System.NonSerialized]
     public bool inBossfight = false;
     [System.NonSerialized]
     public bool bossIsDead = false;
+    private bool bossCamActive = false;
     public Transform[] WinPosition;
     void Start()
     {
@@ -19,12 +24,17 @@ public class GameManagerScript : MonoBehaviour
 
     void Update()
     {
-        if (bossIsDead)
+        if (bossIsDead && inBossfight)
         {
             StartCoroutine(WaitForBossDeath());
+            inBossfight = false;
         }
         if (inBossfight)
         {
+            if (!bossCamActive)
+            {
+                ActivateBossCam();
+            }
             if (GetComponent<AudioSource>().clip != Bossfight)
             {
                 GetComponent<AudioSource>().clip = Bossfight;
@@ -50,10 +60,43 @@ public class GameManagerScript : MonoBehaviour
             }
         }
     }
+    public void MakeScreenShake(float seconds)
+    {
+        StartCoroutine(ScreenShakeLength(seconds));
+    }
+    
+    IEnumerator ScreenShakeLength(float seconds)
+    {
+        if (cam1.activeInHierarchy)
+        {
+            cam1noise.SetActive(true);
+            cam1.SetActive(false);
+            yield return new WaitForSeconds(seconds);
+            cam1.SetActive(true);
+            cam1noise.SetActive(false);
+        }
+        if (cam2.activeInHierarchy)
+        {
+            cam2noise.SetActive(true);
+            cam2.SetActive(false);
+            yield return new WaitForSeconds(seconds);
+            cam2.SetActive(true);
+            cam2noise.SetActive(false);
+        }
+    }
 
+    private void ActivateBossCam()
+    {
+        cam1.SetActive(false);
+        cam1noise.SetActive(false);
+        cam2noise.SetActive(false);
+        cam2.SetActive(true);
+        bossCamActive = true;
+    }
+    
     IEnumerator WaitForBossDeath()
     {
-        yield return new WaitForSecondsRealtime(5);
+        yield return new WaitForSeconds(2);
         if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
             GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
         if (GetComponent<AudioSource>().clip != Won)
@@ -69,5 +112,10 @@ public class GameManagerScript : MonoBehaviour
             player.GetComponent<Animator>().SetBool("Talking", true);
             count++;
         }
+
+        cam1.SetActive(true);
+        cam2.SetActive(false);
+        cam1noise.SetActive(false);
+        cam2noise.SetActive(false);
     }
 }

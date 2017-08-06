@@ -5,7 +5,9 @@ using UnityEngine.Networking;
 
 public class NetworkPlayerController : NetworkBehaviour
 {
+    [System.NonSerialized]
     public bool dies = false;
+    [System.NonSerialized]
     public bool isDead = false;
     [SerializeField]
     private float cursorDistance = 3.00f;

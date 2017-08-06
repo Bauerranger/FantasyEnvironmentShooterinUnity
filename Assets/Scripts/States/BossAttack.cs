@@ -17,7 +17,8 @@ public class BossAttack : IFSMState<EnemyController>
     public void Enter(EnemyController e)
     {
         agent = e.GetComponent<NavMeshAgent>();
-        agent.destination = e.currentWaypoint.position;
+        if (agent.isActiveAndEnabled)
+            agent.destination = e.currentWaypoint.position;
         e.GetComponent<EnemyAnimationManager>().BigBossJump();
     }
 
@@ -32,8 +33,8 @@ public class BossAttack : IFSMState<EnemyController>
 
         if (e.health <= nextStageThreshold && !e.isInStage3)
         {
-                string state = ("BossStage2");
-                e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
+            string state = ("BossStage2");
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
         }
 
         if (e.health <= 0)
@@ -50,11 +51,14 @@ public class BossAttack : IFSMState<EnemyController>
 
     public void Update(EnemyController e)
     {
-        if (agent.remainingDistance < 0.5f && e.currentWaypoint)
+        if (agent.isActiveAndEnabled)
         {
-            e.currentWaypoint.GetComponent<WayPointGiver>().GiveWayPoint(e);
+            if (agent.remainingDistance < 0.5f && e.currentWaypoint)
+            {
+                e.currentWaypoint.GetComponent<WayPointGiver>().GiveWayPoint(e);
+            }
+            if (e.currentWaypoint != null && e.currentWaypoint.position != agent.destination)
+                agent.destination = e.currentWaypoint.position;
         }
-        if (e.currentWaypoint != null && e.currentWaypoint.position != agent.destination)
-            agent.destination = e.currentWaypoint.position;
     }
 }
