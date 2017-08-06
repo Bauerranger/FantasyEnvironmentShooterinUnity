@@ -10,7 +10,6 @@ public class EnemyAttack : IFSMState<EnemyController>
         attackedPlayer = player;
     }
     private GameObject attackedPlayer;
-    private NavMeshAgent agent;
     static readonly EnemyPatrol instance = new EnemyPatrol();
     public static EnemyPatrol Instance
     {
@@ -19,19 +18,18 @@ public class EnemyAttack : IFSMState<EnemyController>
 
     public void Enter(EnemyController e)
     {
-        agent = e.GetComponent<NavMeshAgent>();
-        Debug.Log("Attack");
     }
 
     public void Exit(EnemyController e)
     {
-        agent.stoppingDistance = 0;
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
+            e.GetComponent<NetworkEnemyManager>().agent.stoppingDistance = 0;
         e.killedPlayer = false;
     }
 
     public void Reason(EnemyController e)
     {
-        agent.destination = attackedPlayer.transform.position;
+
 
         if (e.usesRangedWeapons && e.playersInReach.Count == 0)
         {
@@ -41,7 +39,7 @@ public class EnemyAttack : IFSMState<EnemyController>
 
         if (!e.usesRangedWeapons)
         {
-            if (agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
+            if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.GetComponent<NetworkEnemyManager>().agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
             {
 
                 string state = ("EnemyPatrol");
@@ -59,7 +57,8 @@ public class EnemyAttack : IFSMState<EnemyController>
     public void Update(EnemyController e)
     {
         e.UpdatePlayerDead();
-        agent.velocity = Vector3.zero;
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
+            e.GetComponent<NetworkEnemyManager>().agent.velocity = Vector3.zero;
         if (!e.attacks)
         {
             e.GetComponent<EnemyAnimationManager>().PlayAttackAnimation();

@@ -5,7 +5,6 @@ using UnityEngine.AI;
 
 public class EnemyPatrol : IFSMState<EnemyController>
 {
-    private NavMeshAgent agent;
     static readonly EnemyPatrol instance = new EnemyPatrol();
     private int seeingDistance;
     public static EnemyPatrol Instance
@@ -16,11 +15,11 @@ public class EnemyPatrol : IFSMState<EnemyController>
     public void Enter(EnemyController e)
     {
         e.isPatroling = true;
-        agent = e.GetComponent<NavMeshAgent>();
         seeingDistance = e.seeingDistance;
-        agent.stoppingDistance = 0;
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
+        e.GetComponent<NetworkEnemyManager>().agent.stoppingDistance = 0;
         if (e.currentWaypoint)
-        agent.destination = e.currentWaypoint.position;
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeDestination(e.currentWaypoint.gameObject);
     }
 
     public void Exit(EnemyController e)
@@ -46,11 +45,11 @@ public class EnemyPatrol : IFSMState<EnemyController>
     public void Update(EnemyController e)
     {
         e.UpdatePlayerDead();
-        if (agent.remainingDistance < 0.5f && e.currentWaypoint)
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.GetComponent<NetworkEnemyManager>().agent.remainingDistance < 0.5f && e.currentWaypoint)
         {
             e.currentWaypoint.GetComponent<WayPointGiver>().GiveWayPoint(e);
         }
-        if (e.currentWaypoint != null && e.currentWaypoint.position != agent.destination)
-            agent.destination = e.currentWaypoint.position;
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.currentWaypoint != null && e.currentWaypoint.position != e.GetComponent<NetworkEnemyManager>().agent.destination)
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeDestination(e.currentWaypoint.gameObject);
     }
 }

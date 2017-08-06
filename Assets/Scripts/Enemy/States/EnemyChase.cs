@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyChase : IFSMState<EnemyController>
 {
@@ -12,13 +11,15 @@ public class EnemyChase : IFSMState<EnemyController>
     private GameObject chasedPlayer;
     public bool isInMaximumChasingDistance;
     public int maximumChasingDistance;
-    private NavMeshAgent agent;
 
     public void Enter(EnemyController e)
     {
         maximumChasingDistance = e.maximumDistance;
-        agent = e.GetComponent<NavMeshAgent>();
-        agent.stoppingDistance = e.maximumAttackDistance;
+
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
+        {
+            e.GetComponent<NetworkEnemyManager>().agent.stoppingDistance = e.maximumAttackDistance;
+        }
     }
 
     public void Exit(EnemyController e)
@@ -27,7 +28,8 @@ public class EnemyChase : IFSMState<EnemyController>
 
     public void Reason(EnemyController e)
     {
-        agent.destination = chasedPlayer.transform.position;
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
+            e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeDestination(chasedPlayer);
 
         if (e.playersInReach.Count == 0)
         {
@@ -35,12 +37,12 @@ public class EnemyChase : IFSMState<EnemyController>
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
 
-        if (agent.remainingDistance <= e.maximumAttackDistance)
+        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.GetComponent<NetworkEnemyManager>().agent.remainingDistance <= e.maximumAttackDistance)
         {
             string state = ("EnemyAttack");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
-        
+
         if (e.health <= 0)
         {
             string state = ("EnemyDead");

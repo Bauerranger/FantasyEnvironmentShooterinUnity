@@ -31,7 +31,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     private int oldHealth;
     public int deathScore = 25;
     public int enemyDamage = 5;
-    
+
     [Space(15)]
 
     [System.NonSerialized]
@@ -90,7 +90,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
                 playersInReach[0].GetComponent<NetworkPlayerHealth>().ReceiveDamage(enemyDamage);
             foreach (GameObject hit in hitPlayerAnimations)
             {
-                GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
+                if (playersInReach.Count > 0)
+                {
+                    GameObject spawnedParticle = Instantiate(hit, (playersInReach[0].transform.position + new Vector3(0, 1.5f, 0)), Quaternion.identity) as GameObject;
+                }
             }
         }
         if (isBoss)
@@ -133,7 +136,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
 
     public void BigBossAttackSpawn()
     {
-            StartCoroutine(spawnParticles());
+        StartCoroutine(spawnParticles());
     }
 
     public void MakeScreenShake(float shakeTime)
@@ -180,7 +183,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
-    public void DelayChangeState (string state, float waitTime)
+    public void DelayChangeState(string state, float waitTime)
     {
         StartCoroutine(DelayChangeStateEnum(state, waitTime));
     }

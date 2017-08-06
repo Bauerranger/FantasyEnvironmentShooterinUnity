@@ -25,11 +25,11 @@ public class EnemyAnimationManager : MonoBehaviour
         {
             if (!agent.velocity.Equals(Vector3.zero))
             {
-                animator.SetBool("Run", true);
+                GetComponent<NetworkEnemyManager>().ProxyCommandSetRunBool(true);
             }
             else
             {
-                animator.SetBool("Run", false);
+                GetComponent<NetworkEnemyManager>().ProxyCommandSetRunBool(false);
             }
         }
     }

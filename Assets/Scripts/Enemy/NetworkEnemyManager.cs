@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Networking;
 
 
@@ -10,7 +11,52 @@ public class NetworkEnemyManager : NetworkBehaviour
     private List<GameObject> deathParticles = new List<GameObject>();
     [SerializeField]
     private ShotBase shotPrefab;
+    public NavMeshAgent agent;
 
+    private void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        agent.enabled = isServer;
+    }
+
+    public void ProxyCommandSetRunBool(bool run)
+    {
+        Cmd_SetRunBool(run);
+    }
+
+    [Command]
+    void Cmd_SetRunBool(bool run)
+    {
+        Rpc_SetRunBool(run);
+    }
+
+    [ClientRpc]
+    void Rpc_SetRunBool(bool run)
+    {
+        GetComponent<Animator>().SetBool("Run", run);
+    }
+
+    public void ProxyCommandChangeDestination(GameObject destination)
+    {
+        Cmd_ChangeDestination(destination.transform.position);
+    }
+
+    [Command]
+    void Cmd_ChangeDestination(Vector3 destination)
+    {
+        Rpc_ChangeDestination(destination);
+    }
+
+    [ClientRpc]
+    void Rpc_ChangeDestination(Vector3 destination)
+    {
+        if (agent.isActiveAndEnabled)
+            agent.destination = destination;
+    }
 
     public void ProxyCommandTakeDamage(int damageTaken, GameObject player)
     {
