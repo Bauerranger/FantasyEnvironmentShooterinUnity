@@ -231,7 +231,8 @@ public class NetworkPlayerController : NetworkBehaviour
         if (!jumps)
         {
             jumps = true;
-            characterRigidbody.AddForce(Vector3.up * jumpHight, ForceMode.Impulse);
+            if (characterRigidbody != null)
+                characterRigidbody.AddForce(Vector3.up * jumpHight, ForceMode.Impulse);
         }
     }
 
@@ -257,6 +258,7 @@ public class NetworkPlayerController : NetworkBehaviour
         inputIsActive = false;
         EventManager.UpdateMethods -= FetchInput;
         EventManager.UpdateMethods -= Move;
+        EventManager.UpdateMethods -= Rotator;
         Cmd_Die();
     }
 
