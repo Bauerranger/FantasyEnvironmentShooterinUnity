@@ -39,6 +39,8 @@ public class NetworkPlayerController : NetworkBehaviour
     private string[] animationNames = new string[3] { "Run", "Jump", "Melee Attack" };
     private GameObject menuCanvas;
     public bool inputIsActive { get; set; }
+    [System.NonSerialized]
+    public bool takeDamage;
 
     void Awake()
     {
@@ -363,7 +365,53 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
+    enum Action { Run, Jump, Fall, Idle, Attack, TakeDamage};
+    Action actions; 
 
+    public void UpdateVelocityState()
+    {
+        if (characterRigidbody.velocity.x != 0)
+        {
+            actions = Action.Run;
+        }
+        if (characterRigidbody.velocity.y > 0)
+        {
+            actions = Action.Jump;
+        }
+        if (characterRigidbody.velocity.y < 0)
+        {
+            actions = Action.Fall;
+        }
+        if (attacks)
+        {
+            actions = Action.Attack;
+        }
+        if (takeDamage)
+        {
+            actions = Action.TakeDamage;
+        }
+    }
+
+    private void DoAnimations()
+    {
+        switch (actions)
+        {
+            case Action.Run:
+                break;
+            case Action.Jump:
+                break;
+            case Action.Fall:
+                break;
+            case Action.Idle:
+                break;
+            case Action.Attack:
+                break;
+            case Action.TakeDamage:
+                break;
+            default:
+                break;
+        }
+    }
 
     private void OnDisable()
     {

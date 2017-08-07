@@ -49,15 +49,11 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public List<GameObject> effectsForBossShot;
     public List<GameObject> effectsForBossDrop;
 
-
-    void Awake()
-    {
-        oldHealth = health;
-
-    }
+    
 
     private void Start()
     {
+        oldHealth = health;
         fsm = new FSM<EnemyController>();
         if (isBoss)
             fsm.Configure(this, new BossWait());
