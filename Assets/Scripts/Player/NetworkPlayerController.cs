@@ -18,7 +18,7 @@ public class NetworkPlayerController : NetworkBehaviour
     private string moveLeftKey = "a";
     private string moveJumpKey = "space";
     private float addVelocity = 6;
-    private float jumpHight = 8;
+    private float jumpHight = 100;
     private float smoothTime = 0.2f;
     private float cameraDistance = -15f;
     private float cameraOffsetX = 5.5f;
@@ -62,6 +62,7 @@ public class NetworkPlayerController : NetworkBehaviour
         EventManager.movementMethods += CameraMovement;
         EventManager.movementMethods += Rotator;
         EventManager.movementMethods += ShotPointer;
+        EventManager.movementMethods += UpdateAnimationState;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
         inputIsActive = true;
@@ -95,12 +96,17 @@ public class NetworkPlayerController : NetworkBehaviour
         EventManager.ObservePlayerStatus();
         if (dies && !isDead)
             EventManager.Die();
-        MoveStop();
         EventManager.Menu();
     }
 
     void UpdateMethods()
     {
+        
+        if (!runs)
+        {
+            EventManager.movementMethods += MoveStop;
+        }
+
         if (walksLeft && !walksRight)
         {
             EventManager.movementMethods += Cmd_MoveLeft;
@@ -142,7 +148,7 @@ public class NetworkPlayerController : NetworkBehaviour
     void FetchInput()
     {
 
-        if (Input.GetKey(moveRightKey) && !walksLeft && !jumps)
+        if (Input.GetKey(moveRightKey) && !walksLeft)
         {
             walksRight = true;
             runs = true;
@@ -152,7 +158,7 @@ public class NetworkPlayerController : NetworkBehaviour
             walksRight = false;
         }
 
-        if (Input.GetKey(moveLeftKey) && !walksRight && !jumps)
+        if (Input.GetKey(moveLeftKey) && !walksRight)
         {
             walksLeft = true;
             runs = true;
@@ -181,7 +187,7 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             attacks = false;
         }
-    }
+        }
 
     void OpenMenu()
     {
@@ -272,8 +278,6 @@ public class NetworkPlayerController : NetworkBehaviour
     {
         Vector3 speed = new Vector3(addVelocity, characterRigidbody.velocity.y, 0);
         Mover(speed);
-        if (!jumps && runs)
-            animator.SetBool("Run", true);
     }
 
 
@@ -282,8 +286,6 @@ public class NetworkPlayerController : NetworkBehaviour
     {
         Vector3 speed = new Vector3(-addVelocity, characterRigidbody.velocity.y, 0);
         Mover(speed);
-        if (!jumps && runs)
-            animator.SetBool("Run", true);
     }
 
     [Command]
@@ -291,24 +293,15 @@ public class NetworkPlayerController : NetworkBehaviour
     {
         if (!jumps)
         {
-            animator.SetTrigger("Jump");
             jumps = true;
-            Vector3 speed = new Vector3(0, jumpHight, 0);
-            Mover(speed);
+            characterRigidbody.AddForce(Vector3.up * jumpHight, ForceMode.Impulse);
         }
     }
 
     void MoveStop()
     {
-        if (!jumps && !runs)
-        {
             Vector3 speed = new Vector3(0, characterRigidbody.velocity.y, 0);
             characterRigidbody.velocity = speed;
-        }
-        if (!runs)
-        {
-            animator.SetBool("Run", false);
-        }
     }
 
     void Mover(Vector3 speed)
@@ -331,7 +324,7 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             rotation = new Quaternion(characterRigidbody.rotation.x, characterRigidbody.rotation.y, characterRigidbody.rotation.z, characterRigidbody.rotation.w);
         }
-        characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, rotation, 0.1f);
+        characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, rotation, 0.3f);
     }
 
     public void ProxyCommandDie()
@@ -352,64 +345,30 @@ public class NetworkPlayerController : NetworkBehaviour
         isDead = true;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void UpdateAnimationState()
     {
-        if (collision.gameObject.tag == "floor")
+        animator.SetFloat("VelocityX", characterRigidbody.velocity.x);
+        animator.SetFloat("VelocityY", characterRigidbody.velocity.y);
+        if (characterRigidbody.velocity == Vector3.zero)
         {
-            if (jumps && runs)
-            {
-                animator.SetBool("Run", true);
-            }
-            jumps = false;
-            startJump = false;
+            animator.SetBool("VelocityIsZero", true);
         }
-    }
-
-    enum Action { Run, Jump, Fall, Idle, Attack, TakeDamage};
-    Action actions; 
-
-    public void UpdateVelocityState()
-    {
-        if (characterRigidbody.velocity.x != 0)
+        else
         {
-            actions = Action.Run;
-        }
-        if (characterRigidbody.velocity.y > 0)
-        {
-            actions = Action.Jump;
+            animator.SetBool("VelocityIsZero", false);
         }
         if (characterRigidbody.velocity.y < 0)
         {
-            actions = Action.Fall;
-        }
-        if (attacks)
-        {
-            actions = Action.Attack;
-        }
-        if (takeDamage)
-        {
-            actions = Action.TakeDamage;
-        }
-    }
-
-    private void DoAnimations()
-    {
-        switch (actions)
-        {
-            case Action.Run:
-                break;
-            case Action.Jump:
-                break;
-            case Action.Fall:
-                break;
-            case Action.Idle:
-                break;
-            case Action.Attack:
-                break;
-            case Action.TakeDamage:
-                break;
-            default:
-                break;
+            Vector3 down = transform.TransformDirection(Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, down, out hit))
+            {
+                animator.SetFloat("DistanceToGround", hit.distance);
+                if(hit.distance < 0.01f)
+                {
+                    jumps = false;
+                }
+            }
         }
     }
 
