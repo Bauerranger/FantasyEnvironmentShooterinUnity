@@ -63,6 +63,9 @@ public class NetworkPlayerController : NetworkBehaviour
         EventManager.movementMethods += Rotator;
         EventManager.movementMethods += ShotPointer;
         EventManager.movementMethods += UpdateAnimationState;
+        EventManager.buttonAMethods += Cmd_MoveRight;
+        EventManager.buttonDMethods += Cmd_MoveLeft;
+        EventManager.buttonSpaceMethods += Cmd_MoveJump;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
         inputIsActive = true;
@@ -101,26 +104,6 @@ public class NetworkPlayerController : NetworkBehaviour
 
     void UpdateMethods()
     {
-        
-        if (!runs)
-        {
-            EventManager.movementMethods += MoveStop;
-        }
-
-        if (walksLeft && !walksRight)
-        {
-            EventManager.movementMethods += Cmd_MoveLeft;
-        }
-
-        if (walksRight && !walksLeft)
-        {
-            EventManager.movementMethods += Cmd_MoveRight;
-        }
-
-        if (startJump && !jumps)
-        {
-            EventManager.movementMethods += Cmd_MoveJump;
-        }
 
         if (attacks && attackAnimationIsDone)
         {
@@ -152,6 +135,7 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             walksRight = true;
             runs = true;
+            EventManager.buttonAIsPressed();
         }
         if (Input.GetKeyUp(moveRightKey))
         {
@@ -162,6 +146,7 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             walksLeft = true;
             runs = true;
+            EventManager.buttonDIsPressed();
         }
         if (Input.GetKeyUp(moveLeftKey))
         {
@@ -171,6 +156,7 @@ public class NetworkPlayerController : NetworkBehaviour
         if (Input.GetKeyDown(moveJumpKey) && !jumps)
         {
             startJump = true;
+            EventManager.buttonSpaceIsPressed();
         }
 
         if (!Input.GetKey(moveLeftKey) && !Input.GetKey(moveRightKey))

@@ -6,6 +6,9 @@ using UnityEngine;
 public class EventManager : MonoBehaviour
 {
     public static event Action movementMethods;
+    public static event Action buttonAMethods;
+    public static event Action buttonDMethods;
+    public static event Action buttonSpaceMethods;
     public static event Action attackMethods;
     public static event Action shotMethods;
     public static event Action hitEnemyMethods;
@@ -17,6 +20,24 @@ public class EventManager : MonoBehaviour
     {
         if (movementMethods != null)
             movementMethods();
+    }
+
+    public static void buttonAIsPressed()
+    {
+        if (buttonAMethods != null)
+            buttonAMethods();
+    }
+
+    public static void buttonDIsPressed()
+    {
+        if (buttonDMethods != null)
+            buttonDMethods();
+    }
+
+    public static void buttonSpaceIsPressed()
+    {
+        if (buttonSpaceMethods != null)
+            buttonSpaceMethods();
     }
 
     public static void Attack()
@@ -68,6 +89,7 @@ public class EventManager : MonoBehaviour
     private void OnDestroy()
     {
         movementMethods = null;
+        buttonAMethods = null;
         attackMethods = null;
         shotMethods = null;
         hitEnemyMethods = null;
