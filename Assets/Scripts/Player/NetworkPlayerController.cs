@@ -26,8 +26,6 @@ public class NetworkPlayerController : NetworkBehaviour
     private float runSpeed = 6f;
     public float addForce = 50f;
     private bool menuOpen = false;
-    private bool walksRight = false;
-    private bool walksLeft = false;
     private bool runs = false;
     private bool startJump = false;
     private bool jumps = false;
@@ -98,27 +96,16 @@ public class NetworkPlayerController : NetworkBehaviour
         }
         if (inputIsActive && !isDead)
         {
-            if (Input.GetKey(moveRightKey) && !walksLeft && !walksRight)
+            if (Input.GetKey(moveRightKey))
             {
-                //walksRight = true;
                 runs = true;
                 EventManager.buttonLeftIsPressed();
             }
-            if (Input.GetKeyUp(moveRightKey))
-            {
-                walksRight = false;
-            }
 
-            if (Input.GetKey(moveLeftKey) && !walksRight && !walksLeft)
+            if (Input.GetKey(moveLeftKey))
             {
-                //walksLeft = true;
                 runs = true;
                 EventManager.buttonRightIsPressed();
-            }
-
-            if (Input.GetKeyUp(moveLeftKey))
-            {
-                walksLeft = false;
             }
 
             if (Input.GetKeyDown(moveJumpKey) && !jumps)
@@ -162,15 +149,6 @@ public class NetworkPlayerController : NetworkBehaviour
         Vector3 cameraOffsetPos = new Vector3(characterRigidbody.transform.position.x + cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         Vector3 cameraOffsetNeg = new Vector3(characterRigidbody.transform.position.x - cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         cameraMover.transform.position = Vector3.SmoothDamp(cameraMover.transform.position, cameraOffsetNeutral, ref zeroVelocity, smoothTime);
-        if (walksRight && !walksLeft)
-        {
-            cameraMover.transform.position = Vector3.SmoothDamp(cameraMover.transform.position, cameraOffsetPos, ref zeroVelocity, smoothTime);
-        }
-
-        if (walksLeft && !walksRight)
-        {
-            cameraMover.transform.position = Vector3.SmoothDamp(cameraMover.transform.position, cameraOffsetNeg, ref zeroVelocity, smoothTime);
-        }
     }
 
     private void Move()
@@ -264,30 +242,13 @@ public class NetworkPlayerController : NetworkBehaviour
 
     void Rotator()
     {
-        Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
-        Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
-        float angle = Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg;
+        Vector2 playerScreenPosition = Camera.main.WorldToViewportPoint(transform.position);
+        Vector2 mousePositionOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        float angle = Mathf.Atan2(playerScreenPosition.y - mousePositionOnScreen.y, playerScreenPosition.x - mousePositionOnScreen.x) * Mathf.Rad2Deg;
         if (angle <= -90 || angle > 90)
-            transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+            characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, Quaternion.AngleAxis(90, Vector3.up), 0.5f);
         if (angle >= -90 && angle < 90)
-            transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
-        //transform.rotation = Quaternion.Euler(new Vector3(0f, angle, 0f));
-
-        /*
-        Quaternion rotation;
-        if (walksLeft && !walksRight)
-        {
-            rotation = new Quaternion(0, -1f, 0, 1);
-        }
-        else if (walksRight && !walksLeft)
-        {
-            rotation = new Quaternion(0, 1f, 0, 1);
-        }
-        else
-        {
-            rotation = new Quaternion(characterRigidbody.rotation.x, characterRigidbody.rotation.y, characterRigidbody.rotation.z, characterRigidbody.rotation.w);
-        }
-        characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, rotation, 0.3f);*/
+            characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, Quaternion.AngleAxis(-90, Vector3.up), 0.5f);
     }
 
     public void ProxyCommandDie()
