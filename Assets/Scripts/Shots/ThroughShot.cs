@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 public class ThroughShot : NormalShot
 {
+
     private void Start()
     {
         shotRigidbody.AddForce(transform.forward * FireForce);
@@ -13,6 +14,11 @@ public class ThroughShot : NormalShot
     private void OnCollisionEnter(Collision collision)
     {
 
+    }
+
+    private void Update()
+    {
+        transform.position = player.transform.position + new Vector3(1, 1, 0);
     }
 
     private void OnTriggerEnter(Collider collision)

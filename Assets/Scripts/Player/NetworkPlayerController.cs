@@ -23,6 +23,8 @@ public class NetworkPlayerController : NetworkBehaviour
     private float cameraDistance = -15f;
     private float cameraOffsetX = 5.5f;
     private float cameraOffsetY = 5f;
+    private float runSpeed = 6f;
+    public float addForce = 50f;
     private bool menuOpen = false;
     private bool walksRight = false;
     private bool walksLeft = false;
@@ -59,33 +61,21 @@ public class NetworkPlayerController : NetworkBehaviour
         cameraMover.transform.position = new Vector3(characterRigidbody.transform.position.x + cameraOffsetX, characterRigidbody.transform.position.y + cameraOffsetY, cameraDistance);
         cameraMover.transform.rotation = Quaternion.Euler(cameraAngle);
         Cursor.visible = false;
-        EventManager.movementMethods += CameraMovement;
-        EventManager.movementMethods += Rotator;
-        EventManager.movementMethods += ShotPointer;
-        EventManager.movementMethods += UpdateAnimationState;
-        EventManager.buttonAMethods += Cmd_MoveRight;
-        EventManager.buttonDMethods += Cmd_MoveLeft;
+        EventManager.UpdateMethods += FetchInput;
+        EventManager.UpdateMethods += Move;
+        EventManager.UpdateMethods += CameraMovement;
+        EventManager.UpdateMethods += Rotator;
+        EventManager.UpdateMethods += ShotPointer;
+        EventManager.UpdateMethods += UpdateAnimationState;
+        EventManager.attackMethods += Cmd_Attack;
+        EventManager.buttonLeftMethods += Cmd_MoveRight;
+        EventManager.buttonRightMethods += Cmd_MoveLeft;
+        EventManager.stopMethods += MoveStop;
         EventManager.buttonSpaceMethods += Cmd_MoveJump;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
         menuCanvas = GameObject.FindGameObjectWithTag("main_Menu");
         inputIsActive = true;
         EventManager.dieMethods += ProxyCommandDie;
-    }
-
-    void Update()
-    {
-        if (!isLocalPlayer)
-        {
-            return;
-        }
-        if (inputIsActive && !isDead)
-            FetchInput();
-        UpdateMethods();
-        if (isDead)
-        {
-            inputIsActive = false;
-            characterRigidbody.velocity = Vector3.zero;
-        }
     }
 
     private void FixedUpdate()
@@ -94,86 +84,65 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             return;
         }
-        EventManager.Movement();
-        EventManager.Attack();
         EventManager.ObservePlayerStatus();
         if (dies && !isDead)
             EventManager.Die();
         EventManager.Menu();
     }
 
-    void UpdateMethods()
-    {
-
-        if (attacks && attackAnimationIsDone)
-        {
-            EventManager.attackMethods += Cmd_Attack;
-        }
-        if (!attacks)
-        {
-            EventManager.attackMethods -= Cmd_Attack;
-        }
-        if (!walksRight)
-        {
-            EventManager.movementMethods -= Cmd_MoveRight;
-        }
-        if (!walksLeft)
-        {
-            EventManager.movementMethods -= Cmd_MoveLeft;
-        }
-
-        if (jumps)
-        {
-            EventManager.movementMethods -= Cmd_MoveJump;
-        }
-    }
-
     void FetchInput()
     {
+        if (isDead)
+        {
+            EventManager.UpdateMethods -= FetchInput;
+        }
+        if (inputIsActive && !isDead)
+        {
+            if (Input.GetKey(moveRightKey) && !walksLeft && !walksRight)
+            {
+                //walksRight = true;
+                runs = true;
+                EventManager.buttonLeftIsPressed();
+            }
+            if (Input.GetKeyUp(moveRightKey))
+            {
+                walksRight = false;
+            }
 
-        if (Input.GetKey(moveRightKey) && !walksLeft)
-        {
-            walksRight = true;
-            runs = true;
-            EventManager.buttonAIsPressed();
-        }
-        if (Input.GetKeyUp(moveRightKey))
-        {
-            walksRight = false;
-        }
+            if (Input.GetKey(moveLeftKey) && !walksRight && !walksLeft)
+            {
+                //walksLeft = true;
+                runs = true;
+                EventManager.buttonRightIsPressed();
+            }
 
-        if (Input.GetKey(moveLeftKey) && !walksRight)
-        {
-            walksLeft = true;
-            runs = true;
-            EventManager.buttonDIsPressed();
-        }
-        if (Input.GetKeyUp(moveLeftKey))
-        {
-            walksLeft = false;
-        }
+            if (Input.GetKeyUp(moveLeftKey))
+            {
+                walksLeft = false;
+            }
 
-        if (Input.GetKeyDown(moveJumpKey) && !jumps)
-        {
-            startJump = true;
-            EventManager.buttonSpaceIsPressed();
-        }
+            if (Input.GetKeyDown(moveJumpKey) && !jumps)
+            {
+                startJump = true;
+                EventManager.buttonSpaceIsPressed();
+            }
 
-        if (!Input.GetKey(moveLeftKey) && !Input.GetKey(moveRightKey))
-        {
-            runs = false;
-        }
+            if (!Input.GetKey(moveLeftKey) && !Input.GetKey(moveRightKey))
+            {
+                EventManager.notLefnorRightIsPressed();
+            }
 
-        if (Input.GetMouseButton(0) && attackAnimationIsDone)
-        {
-            attacks = true;
-        }
+            if (Input.GetMouseButton(0) && attackAnimationIsDone)
+            {
+                EventManager.Attack();
+            }
 
-        if (Input.GetMouseButtonUp(0))
-        {
-            attacks = false;
+            if (Input.GetMouseButtonUp(0))
+            {
+                attacks = false;
+            }
         }
-        }
+    }
 
     void OpenMenu()
     {
@@ -204,6 +173,12 @@ public class NetworkPlayerController : NetworkBehaviour
         }
     }
 
+    private void Move()
+    {
+        Vector3 speed = new Vector3(addVelocity, characterRigidbody.velocity.y, 0);
+        characterRigidbody.velocity = speed;
+    }
+
     [Command]
     void Cmd_Attack()
     {
@@ -226,7 +201,7 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             if (hit.transform.tag == "Enemy")
             {
-                ShotTargetPoint.position = hit.transform.position + new Vector3(0,1.8f,0);
+                ShotTargetPoint.position = hit.transform.position + new Vector3(0, 1.8f, 0);
                 targetFound = true;
             }
         }
@@ -262,16 +237,14 @@ public class NetworkPlayerController : NetworkBehaviour
     [Command]
     void Cmd_MoveRight()
     {
-        Vector3 speed = new Vector3(addVelocity, characterRigidbody.velocity.y, 0);
-        Mover(speed);
+        addVelocity = runSpeed;
     }
 
 
     [Command]
     void Cmd_MoveLeft()
     {
-        Vector3 speed = new Vector3(-addVelocity, characterRigidbody.velocity.y, 0);
-        Mover(speed);
+        addVelocity = -runSpeed;
     }
 
     [Command]
@@ -286,17 +259,21 @@ public class NetworkPlayerController : NetworkBehaviour
 
     void MoveStop()
     {
-            Vector3 speed = new Vector3(0, characterRigidbody.velocity.y, 0);
-            characterRigidbody.velocity = speed;
-    }
-
-    void Mover(Vector3 speed)
-    {
-        characterRigidbody.velocity = speed;
+        addVelocity = 0;
     }
 
     void Rotator()
     {
+        Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
+        Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        float angle = Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg;
+        if (angle <= -90 || angle > 90)
+            transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+        if (angle >= -90 && angle < 90)
+            transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
+        //transform.rotation = Quaternion.Euler(new Vector3(0f, angle, 0f));
+
+        /*
         Quaternion rotation;
         if (walksLeft && !walksRight)
         {
@@ -310,11 +287,15 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             rotation = new Quaternion(characterRigidbody.rotation.x, characterRigidbody.rotation.y, characterRigidbody.rotation.z, characterRigidbody.rotation.w);
         }
-        characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, rotation, 0.3f);
+        characterRigidbody.rotation = Quaternion.Lerp(characterRigidbody.rotation, rotation, 0.3f);*/
     }
 
     public void ProxyCommandDie()
     {
+
+        inputIsActive = false;
+        EventManager.UpdateMethods -= FetchInput;
+        EventManager.UpdateMethods -= Move;
         Cmd_Die();
     }
 
@@ -327,6 +308,7 @@ public class NetworkPlayerController : NetworkBehaviour
     [ClientRpc]
     public void Rpc_Die()
     {
+        characterRigidbody.velocity = Vector3.zero;
         animator.SetTrigger("Die");
         isDead = true;
     }
@@ -343,39 +325,37 @@ public class NetworkPlayerController : NetworkBehaviour
         {
             animator.SetBool("VelocityIsZero", false);
         }
-        if (characterRigidbody.velocity.y < 0)
+        Vector3 down = transform.TransformDirection(Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, down, out hit))
         {
-            Vector3 down = transform.TransformDirection(Vector3.down);
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, down, out hit))
+            animator.SetFloat("DistanceToGround", hit.distance);
+            if (hit.distance < 0.01f)
             {
-                animator.SetFloat("DistanceToGround", hit.distance);
-                if(hit.distance < 0.01f)
-                {
-                    jumps = false;
-                }
+                jumps = false;
             }
+
         }
     }
 
     private void OnDisable()
     {
-        EventManager.movementMethods -= Cmd_MoveRight;
-        EventManager.movementMethods -= Cmd_MoveLeft;
-        EventManager.movementMethods -= Cmd_MoveJump;
-        EventManager.movementMethods -= CameraMovement;
-        EventManager.movementMethods -= Rotator;
-        EventManager.movementMethods -= ShotPointer;
+        EventManager.UpdateMethods -= Cmd_MoveRight;
+        EventManager.UpdateMethods -= Cmd_MoveLeft;
+        EventManager.UpdateMethods -= Cmd_MoveJump;
+        EventManager.UpdateMethods -= CameraMovement;
+        EventManager.UpdateMethods -= Rotator;
+        EventManager.UpdateMethods -= ShotPointer;
     }
 
     private void OnDestroy()
     {
-        EventManager.movementMethods -= Cmd_MoveRight;
-        EventManager.movementMethods -= Cmd_MoveLeft;
-        EventManager.movementMethods -= Cmd_MoveJump;
-        EventManager.movementMethods -= CameraMovement;
-        EventManager.movementMethods -= Rotator;
-        EventManager.movementMethods -= ShotPointer;
+        EventManager.UpdateMethods -= Cmd_MoveRight;
+        EventManager.UpdateMethods -= Cmd_MoveLeft;
+        EventManager.UpdateMethods -= Cmd_MoveJump;
+        EventManager.UpdateMethods -= CameraMovement;
+        EventManager.UpdateMethods -= Rotator;
+        EventManager.UpdateMethods -= ShotPointer;
     }
 
 }

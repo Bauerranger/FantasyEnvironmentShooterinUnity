@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
-    public static event Action movementMethods;
-    public static event Action buttonAMethods;
-    public static event Action buttonDMethods;
+    
+    public static event Action UpdateMethods;
+    public static event Action buttonLeftMethods;
+    public static event Action buttonRightMethods;
+    public static event Action stopMethods;
     public static event Action buttonSpaceMethods;
     public static event Action attackMethods;
     public static event Action shotMethods;
@@ -15,23 +17,30 @@ public class EventManager : MonoBehaviour
     public static event Action menuMethods;
     public static event Action playerStatusMethods;
     public static event Action dieMethods;
+    public static event Action levitatesMethods;
 
-    public static void Movement()
+    public void FixedUpdate()
     {
-        if (movementMethods != null)
-            movementMethods();
+        if (UpdateMethods != null)
+            UpdateMethods();
     }
 
-    public static void buttonAIsPressed()
+    public static void buttonLeftIsPressed()
     {
-        if (buttonAMethods != null)
-            buttonAMethods();
+        if (buttonLeftMethods != null)
+            buttonLeftMethods();
     }
 
-    public static void buttonDIsPressed()
+    public static void buttonRightIsPressed()
     {
-        if (buttonDMethods != null)
-            buttonDMethods();
+        if (buttonRightMethods != null)
+            buttonRightMethods();
+    }
+
+    public static void notLefnorRightIsPressed()
+    {
+        if (stopMethods != null)
+            stopMethods();
     }
 
     public static void buttonSpaceIsPressed()
@@ -78,6 +87,12 @@ public class EventManager : MonoBehaviour
         }
     }
 
+    public static void levitates()
+    {
+        if (levitatesMethods != null)
+            levitatesMethods();
+    }
+
     public static void Die()
     {
         if (dieMethods != null)
@@ -88,8 +103,8 @@ public class EventManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        movementMethods = null;
-        buttonAMethods = null;
+        UpdateMethods = null;
+        buttonLeftMethods = null;
         attackMethods = null;
         shotMethods = null;
         hitEnemyMethods = null;
