@@ -75,6 +75,7 @@ public class BattleManager : NetworkBehaviour
                 StartCoroutine(SpawnWaves());
             }
             hasSpawned = true;
+            Debug.Log("Enemys Alive " + enemysAlive.Count);
             if (other.gameObject == playerTriggered)
                 playerCount++;
             if (other.gameObject != playerTriggered)

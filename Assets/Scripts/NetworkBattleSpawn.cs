@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class NetworkBattleSpawn : NetworkBehaviour
 {
     [SerializeField]
-    private GameObject enemy;
+    private EnemyController enemy;
     [SerializeField]
     private GameObject epicLoot;
     [SerializeField]
@@ -30,13 +30,13 @@ public class NetworkBattleSpawn : NetworkBehaviour
     {
         if (!isServer)
             return;
-        GameObject spawnedEnemy = Instantiate(enemy, this.transform.position, this.transform.rotation);
-        NetworkServer.Spawn(spawnedEnemy);
+        EnemyController spawnedEnemy = Instantiate(enemy, this.transform.position, this.transform.rotation);
+        NetworkServer.Spawn(spawnedEnemy.gameObject);
         spawnFrom.GetComponent<BattleManager>().enemysAlive.Add(spawnedEnemy.gameObject);
         spawnedEnemy.GetComponent<EnemyController>().spawnedBy = spawnFrom;
         if (firstWayPoint)
         {
-            Cmd_ChangeWayPoint(spawnedEnemy);
+            Cmd_ChangeWayPoint(spawnedEnemy.gameObject);
         }
     }
 
