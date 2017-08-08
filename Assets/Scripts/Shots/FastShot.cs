@@ -44,6 +44,10 @@ public class FastShot : NormalShot
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(shotDamage, player);
         }
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.GetComponent<NetworkPlayerHealth>().ReceiveDamage(shotDamage);
+        }
     }
 
     IEnumerator WaitBetweenShots(float waitTime)

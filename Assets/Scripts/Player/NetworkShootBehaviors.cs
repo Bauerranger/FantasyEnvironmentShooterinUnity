@@ -139,6 +139,10 @@ public class NetworkShootBehaviors : NetworkBehaviour
     [Command]
     void CmdShoot(shotType type, Vector3 targetWorldPosition)
     {
+        if (!isServer)
+        {
+            return;
+        }
         ammoOfPowerUp--;
         Quaternion rotation = Quaternion.LookRotation((targetWorldPosition - ShootStartPoint.position).normalized, Vector3.up);
         Rpc_spawnShot(type, ShootStartPoint.position, rotation);

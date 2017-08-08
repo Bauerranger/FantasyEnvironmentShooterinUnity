@@ -32,7 +32,7 @@ public class NetworkBattleSpawn : NetworkBehaviour
             return;
         GameObject spawnedEnemy = Instantiate(enemy, this.transform.position, this.transform.rotation);
         NetworkServer.Spawn(spawnedEnemy);
-        spawnFrom.GetComponent<BattleManager>().enemysAlive.Add(spawnedEnemy);
+        spawnFrom.GetComponent<BattleManager>().enemysAlive.Add(spawnedEnemy.gameObject);
         spawnedEnemy.GetComponent<EnemyController>().spawnedBy = spawnFrom;
         if (firstWayPoint)
         {

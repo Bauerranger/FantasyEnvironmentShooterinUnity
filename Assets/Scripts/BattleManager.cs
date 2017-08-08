@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class BattleManager : MonoBehaviour
+public class BattleManager : NetworkBehaviour
 {
     [SerializeField]
     private List<GameObject> enemySpawns = new List<GameObject>();
@@ -69,6 +70,10 @@ public class BattleManager : MonoBehaviour
                     spawn.GetComponent<NetworkBattleSpawn>().SpawnEnemy();
                 }
             }
+            if (isServer)
+            {
+                StartCoroutine(SpawnWaves());
+            }
             hasSpawned = true;
             if (other.gameObject == playerTriggered)
                 playerCount++;
@@ -86,7 +91,7 @@ public class BattleManager : MonoBehaviour
     {
         for (int wavesSpawned = 0; wavesSpawned < waveCount; wavesSpawned++)
         {
-            foreach (GameObject spawn in twoPlayerEnemySpawns)
+            foreach (GameObject spawn in enemySpawnWaves)
             {
                 spawn.GetComponent<NetworkBattleSpawn>().SpawnEnemy();
             }
