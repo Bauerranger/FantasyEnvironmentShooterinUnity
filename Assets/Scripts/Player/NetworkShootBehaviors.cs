@@ -33,6 +33,9 @@ public class NetworkShootBehaviors : NetworkBehaviour
     public int powerUpNo = 0;
     [SerializeField]
     private int oldPowerUpNo = 0;
+    [SerializeField]
+    private GameObject[] powerUpIndicator;
+    private GameObject activePowerUpIndicator;
 
     void Start()
     {
@@ -47,7 +50,7 @@ public class NetworkShootBehaviors : NetworkBehaviour
     {
         if (ammoOfPowerUp <= 0)
         {
-            powerUpNo = 0;
+            powerUpNo = 0;            
         }
         if (oldPowerUpNo != powerUpNo)
         {
@@ -58,24 +61,44 @@ public class NetworkShootBehaviors : NetworkBehaviour
                     EventManager.shotMethods -= ProxyCommandMortarShot;
                     EventManager.shotMethods -= ProxyCommandThroughShot;
                     EventManager.shotMethods -= ProxyCommandRapidShot;
+                    if (activePowerUpIndicator != null)
+                    {
+                        Destroy(activePowerUpIndicator);
+                    }
                     break;
                 case 1:
                     EventManager.shotMethods -= ProxyCommandNormalShot;
                     EventManager.shotMethods += ProxyCommandMortarShot;
                     EventManager.shotMethods -= ProxyCommandThroughShot;
                     EventManager.shotMethods -= ProxyCommandRapidShot;
+                    if (activePowerUpIndicator != null)
+                    {
+                        Destroy(activePowerUpIndicator);
+                    }
+                    activePowerUpIndicator = Instantiate(powerUpIndicator[0], this.transform.position, this.transform.rotation);
                     break;
                 case 2:
                     EventManager.shotMethods -= ProxyCommandNormalShot;
                     EventManager.shotMethods -= ProxyCommandMortarShot;
                     EventManager.shotMethods += ProxyCommandThroughShot;
                     EventManager.shotMethods -= ProxyCommandRapidShot;
+                    if (activePowerUpIndicator != null)
+                    {
+                        Destroy(activePowerUpIndicator);
+                    }
+                    activePowerUpIndicator = Instantiate(powerUpIndicator[1], this.transform.position, this.transform.rotation);
                     break;
                 case 3:
                     EventManager.shotMethods -= ProxyCommandNormalShot;
                     EventManager.shotMethods -= ProxyCommandMortarShot;
                     EventManager.shotMethods -= ProxyCommandThroughShot;
                     EventManager.shotMethods += ProxyCommandRapidShot;
+                    if (activePowerUpIndicator != null)
+                    {
+                        Destroy(activePowerUpIndicator);
+                    }
+                    activePowerUpIndicator = Instantiate(powerUpIndicator[2], this.transform.position, this.transform.rotation);
+                    
                     break;
                 default:
                     break;
@@ -87,6 +110,10 @@ public class NetworkShootBehaviors : NetworkBehaviour
         if (!isLocalPlayer)
             return;
         ShotTargetPoint = GameObject.FindGameObjectWithTag("ShotTargetPoint").transform;
+        if (activePowerUpIndicator != null)
+        {
+            activePowerUpIndicator.transform.position = this.transform.position + new Vector3(0,0.1f,0);
+        }
     }
 
     void ProxyCommandNormalShot()
