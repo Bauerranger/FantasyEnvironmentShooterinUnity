@@ -31,13 +31,13 @@ public class EnemyAttack : IFSMState<EnemyController>
     {
 
 
-        if (e.usesRangedWeapons && e.playersInReach.Count == 0)
+        if (e.isWaiting && e.playersInReach.Count == 0)
         {
             string state = ("EnemyWait");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, attackedPlayer);
         }
 
-        if (!e.usesRangedWeapons)
+        if (!e.isWaiting)
         {
             if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.GetComponent<NetworkEnemyManager>().agent.remainingDistance >= e.maximumAttackDistance || e.playersInReach.Count == 0 || e.killedPlayer == true)
             {

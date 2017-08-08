@@ -19,6 +19,8 @@ public class NetworkBattleSpawn : NetworkBehaviour
 
     public void SpawnEpicLoot()
     {
+        if (!isServer)
+            return;
         GameObject spawnedEpicLoot = Instantiate(epicLoot, this.transform.position, this.transform.rotation);
         NetworkServer.Spawn(spawnedEpicLoot);
         Destroy(this.gameObject);

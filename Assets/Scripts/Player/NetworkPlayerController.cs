@@ -18,7 +18,7 @@ public class NetworkPlayerController : NetworkBehaviour
     private string moveLeftKey = "a";
     private string moveJumpKey = "space";
     private float addVelocity = 6;
-    private float jumpHight = 100;
+    private float jumpHight = 80;
     private float smoothTime = 0.2f;
     private float cameraDistance = -15f;
     private float cameraOffsetX = 5.5f;

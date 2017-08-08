@@ -38,7 +38,7 @@ public class EnemyAnimationManager : MonoBehaviour
     {
         if (!isAttacking)
         {
-            if (!GetComponent<EnemyController>().usesRangedWeapons)
+            if (!GetComponent<EnemyController>().isWaiting)
             {
                 float random = Random.Range(0, 3);
                 if (random >= 0 && random < 1)
@@ -48,7 +48,7 @@ public class EnemyAnimationManager : MonoBehaviour
                 if (random >= 2 && random < 4)
                     animator.SetTrigger("Melee Attack 03");
             }
-            if (GetComponent<EnemyController>().usesRangedWeapons)
+            if (GetComponent<EnemyController>().isWaiting)
             {
                 if (GetComponent<EnemyController>().isMage)
                 {

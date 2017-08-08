@@ -11,7 +11,7 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public bool isBoss;
     [System.NonSerialized]
     public bool isInBossfight;
-    public bool usesRangedWeapons;
+    public bool isWaiting;
     public bool isMage;
     [System.NonSerialized]
     public bool dead;
@@ -57,9 +57,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         fsm = new FSM<EnemyController>();
         if (isBoss)
             fsm.Configure(this, new BossWait());
-        if (!usesRangedWeapons && !isBoss)
+        if (!isWaiting && !isBoss)
             fsm.Configure(this, new EnemyPatrol());
-        if (usesRangedWeapons && !isBoss)
+        if (isWaiting && !isBoss)
             fsm.Configure(this, new EnemyWait());
     }
 
