@@ -23,6 +23,13 @@ public class NetworkEnemyManager : NetworkBehaviour
         agent.enabled = isServer;
     }
 
+    void SelfDestruct()
+    {
+        if (!isServer)
+            return;
+        GetComponent<EnemyController>().Die();
+    }
+
     public void ProxyCommandSetRunBool(bool run)
     {
         Cmd_SetRunBool(run);
