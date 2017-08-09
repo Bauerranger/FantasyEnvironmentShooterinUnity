@@ -62,12 +62,19 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         if (isWaiting && !isBoss)
             fsm.Configure(this, new EnemyWait());
     }
-
+    /// <summary>
+    /// Sends the taken damage and the inflicting player to the network. The player is used for the highscore
+    /// </summary>
+    /// <param name="damageTaken">Damage the projectile inflicts</param>
+    /// <param name="player">The shooting player</param>
     public void TakeDamage(int damageTaken, GameObject player)
     {
         GetComponent<NetworkEnemyManager>().ProxyCommandTakeDamage(damageTaken, player);
     }
 
+    /// <summary>
+    /// Checks if player is dead and if so removes him from the attack list, so the enemy can find a new victim.
+    /// </summary>
     public void UpdatePlayerDead()
     {
         if (playersInReach.Count > 0 && playersInReach[0].GetComponent<NetworkPlayerHealth>().health < 0)
@@ -77,6 +84,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
+    /// <summary>
+    /// Damages the player. It is only for the close combat units and when the boss jumps (eg. no projectile is involved)
+    /// if boss he can hit multiple players at once instead of just the first one he saw.
+    /// </summary>
     public void InflictDamage()
     {
         GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().MakeScreenShake(0.5f);
@@ -107,6 +118,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
+    /// <summary>
+    /// Tells the BattleManager that this enemy is dead and starts the death events
+    /// </summary>
     public void Die()
     {
         if (spawnedBy.GetComponent<BattleManager>().enemysAlive.Count > 0 && spawnedBy.GetComponent<BattleManager>().enemysAlive.Contains(this.gameObject))
@@ -114,11 +128,17 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         dead = true;
     }
 
+    /// <summary>
+    /// This method is called, when the attack animation ends by the animation. It is intrduced so the enemy only attacks once the attack is done.
+    /// </summary>
     public void AttackAnimationEnds()
     {
         attacks = false;
     }
 
+    /// <summary>
+    /// This method is called per animation. The boss Jumps and when he drops he inflicts damage on all surrounding players
+    /// </summary>
     public void BossAttack()
     {
         foreach (GameObject player in playersInReach)
@@ -131,6 +151,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
+    /// <summary>
+    /// The boss spawns bunnies that fall down from the sky
+    /// </summary>
     public void BigBossAttackSpawn()
     {
         StartCoroutine(spawnParticles());
@@ -141,12 +164,19 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerScript>().MakeScreenShake(shakeTime);
     }
 
+    /// <summary>
+    /// the enemy has a trigger arround him that adds a player that is in reach to a list. With this method two or even more players can be observed on the same time
+    /// </summary>
+    /// <param name="other"></param>
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player" && other.GetComponent<NetworkPlayerHealth>().health > 0)
             playersInReach.Add(other.gameObject);
     }
-
+    /// <summary>
+    /// the enemy has a trigger arround him that deletes the leaving player from a list. With this method two or even more players can be observed on the same time
+    /// </summary>
+    /// <param name="other"></param>
     void OnTriggerExit(Collider other)
     {
         if (other.tag == "Player")
@@ -155,6 +185,10 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
+    /// <summary>
+    /// The Boss spawns his bunnybombs from the shotspawns
+    /// </summary>
+    /// <returns></returns>
     IEnumerator spawnParticles()
     {
         foreach (Transform spawnPoint in BossShotSpawns)
@@ -180,6 +214,11 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         }
     }
 
+    /// <summary>
+    /// The third stage of the boss fight is a mix of the second and first boss stage. rather than writing a new stage he changes between stage one and stage two within a certain timespan
+    /// </summary>
+    /// <param name="state"></param>
+    /// <param name="waitTime"></param>
     public void DelayChangeState(string state, float waitTime)
     {
         StartCoroutine(DelayChangeStateEnum(state, waitTime));
@@ -192,6 +231,9 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, gameObject);
     }
 
+    /// <summary>
+    /// Basically a bugfix (enemy in the beginning always goes to attack because the distance to its target is always zero in the beginning
+    /// </summary>
     public void StartWaitForAttack()
     {
         StartCoroutine(WaitBeforeAttackWaiter());
