@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles all High score related features
+/// </summary>
 public class ScoreManager : NetworkBehaviour
 {
 
@@ -15,6 +18,11 @@ public class ScoreManager : NetworkBehaviour
         highscore = new Dictionary<string, int>();
     }
 
+    /// <summary>
+    /// Adds score to the players dictionary entry and synchronises it in the network
+    /// </summary>
+    /// <param name="player">NetworkId of the player</param>
+    /// <param name="score">score the player gets</param>
     public void ProxyCommandAddScore(string player, int score)
     {
         Cmd_AddScore(player, score);

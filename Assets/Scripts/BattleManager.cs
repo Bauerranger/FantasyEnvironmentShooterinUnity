@@ -29,6 +29,9 @@ public class BattleManager : NetworkBehaviour
     [SerializeField]
     private Collider colliderEnd;
 
+    /// <summary>
+    /// If all enemies are dead the loot is spawned
+    /// </summary>
     private void Update()
     {
         if (hasSpawned)
@@ -55,6 +58,10 @@ public class BattleManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts battle sequence and spawns all enemies
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player" && !hasSpawned)

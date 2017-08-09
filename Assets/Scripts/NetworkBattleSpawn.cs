@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Spawns enemys in the network
+/// </summary>
 public class NetworkBattleSpawn : NetworkBehaviour
 {
     [SerializeField]
@@ -26,6 +29,9 @@ public class NetworkBattleSpawn : NetworkBehaviour
         Destroy(this.gameObject);
     }
 
+    /// <summary>
+    /// Spawns enemies and adds them to a list for purposes like when the spawning gameobject is destroyed, all enemies are destroyed also
+    /// </summary>
     public void SpawnEnemy()
     {
         if (!isServer)

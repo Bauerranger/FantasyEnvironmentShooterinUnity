@@ -43,6 +43,10 @@ public class GUIManager : MonoBehaviour
             imageLoad.transform.Rotate(Vector3.forward * 20);
     }
 
+    /// <summary>
+    /// Fetches input
+    /// Is located here because it needs to be active even though the player is dead
+    /// </summary>
     void fetchInput()
     {
         if (Input.GetKeyDown("escape") && !menuOpen && !processingInput)
@@ -145,6 +149,9 @@ public class GUIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Closes the menu when the small red x is pressed.
+    /// </summary>
     public void closeByButton()
     {
         menuOpen = false;
@@ -152,6 +159,9 @@ public class GUIManager : MonoBehaviour
             GameObject.FindGameObjectWithTag("Player").GetComponent<NetworkPlayerController>().inputIsActive = true;
     }
 
+    /// <summary>
+    /// Rotates a small loading indicator
+    /// </summary>
     public void rotateLoader()
     {
         Vector3 rotateLoad = new Vector3(0, 0, 0.1f);

@@ -101,15 +101,22 @@ public class EventManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Nullifies all methods in the eventsystem
+    /// </summary>
     private void OnDestroy()
     {
         UpdateMethods = null;
         buttonLeftMethods = null;
+        buttonRightMethods = null;
+        stopMethods = null;
+        buttonSpaceMethods = null;
         attackMethods = null;
         shotMethods = null;
         hitEnemyMethods = null;
         menuMethods = null;
         playerStatusMethods = null;
         dieMethods = null;
-    }
+        levitatesMethods = null;
+}
 }

@@ -20,6 +20,10 @@ public class EnemyAttack : IFSMState<EnemyController>
     {
     }
 
+    /// <summary>
+    /// If the player is killed, the enemy resets his behaviour
+    /// </summary>
+    /// <param name="e"></param>
     public void Exit(EnemyController e)
     {
         if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
@@ -27,9 +31,14 @@ public class EnemyAttack : IFSMState<EnemyController>
         e.killedPlayer = false;
     }
 
+    /// <summary>
+    /// Enemys in waiting mode go back to the waiting stage (the wizards and the assasins do (the assasin has some weird bug where she begins to move on her own and i can´t find out why)
+    /// When the player is killed or out of reach it should go back to patrol and (if the player is still in sight) go into chase again
+    /// if the enemy has 0 health he dies
+    /// </summary>
+    /// <param name="e"></param>
     public void Reason(EnemyController e)
     {
-
 
         if (e.isWaiting && e.playersInReach.Count == 0)
         {
@@ -57,8 +66,6 @@ public class EnemyAttack : IFSMState<EnemyController>
     public void Update(EnemyController e)
     {
         e.UpdatePlayerDead();
-        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled)
-            e.GetComponent<NetworkEnemyManager>().agent.velocity = Vector3.zero;
         if (!e.attacks)
         {
             e.GetComponent<EnemyAnimationManager>().PlayAttackAnimation();

@@ -20,6 +20,13 @@ public class GameManagerScript : NetworkBehaviour
     private bool bossCamActive = false;
     public Transform[] WinPosition;
 
+    /// <summary>
+    /// Checks if winning conditions are met and sends the players to the winning screen after boss died
+    /// Activates the cam for the boss
+    /// Checks if all players are dead
+    /// Activates Highscore if all players are dead
+    /// 
+    /// </summary>
     void Update()
     {
         if (bossIsDead && inBossfight)
@@ -49,13 +56,13 @@ public class GameManagerScript : NetworkBehaviour
         {
             foreach (GameObject player in players)
             {
-                int coundDead = 0;
+                int countDead = 0;
                 foreach (GameObject playerDead in players)
                 {
                     if (playerDead.GetComponent<NetworkPlayerController>().isDead)
-                        coundDead++;
+                        countDead++;
                 }
-                if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && coundDead >= players.Count)
+                if (player.GetComponent<NetworkPlayerController>() != null && GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null && countDead >= players.Count)
                 {
                     GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
                     GetComponent<AudioSource>().clip = Lost;
@@ -64,6 +71,7 @@ public class GameManagerScript : NetworkBehaviour
             }
         }
     }
+
     public void MakeScreenShake(float seconds)
     {
         if (!isLocalPlayer)
@@ -102,7 +110,6 @@ public class GameManagerScript : NetworkBehaviour
     IEnumerator WaitForBossDeath()
     {
         yield return new WaitForSeconds(2);
-        if (GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>() != null)
             GameObject.FindGameObjectWithTag("HighscoreManager").GetComponent<ScoreManager>().ActivateHighscore();
         if (GetComponent<AudioSource>().clip != Won)
         {
