@@ -8,6 +8,10 @@ public class StartBossfight : MonoBehaviour {
     public GameObject boss;
     private int count;
 
+    /// <summary>
+    /// Starts boss fight
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         if (other.tag != "Player")

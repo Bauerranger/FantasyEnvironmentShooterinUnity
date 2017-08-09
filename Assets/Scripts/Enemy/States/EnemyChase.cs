@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyChase : IFSMState<EnemyController>
 {
+
     public EnemyChase(GameObject player)
     {
         chasedPlayer = player;
@@ -20,10 +21,12 @@ public class EnemyChase : IFSMState<EnemyController>
         {
             e.GetComponent<NetworkEnemyManager>().agent.stoppingDistance = e.maximumAttackDistance;
         }
+        e.StartWaitForAttack();
     }
 
     public void Exit(EnemyController e)
     {
+        e.waitBeforeAttack = false;
     }
 
     public void Reason(EnemyController e)
@@ -37,7 +40,7 @@ public class EnemyChase : IFSMState<EnemyController>
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);
         }
 
-        if (e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.GetComponent<NetworkEnemyManager>().agent.remainingDistance <= e.maximumAttackDistance)
+        if (e.waitBeforeAttack && e.GetComponent<NetworkEnemyManager>().agent.isActiveAndEnabled && e.GetComponent<NetworkEnemyManager>().agent.remainingDistance <= e.maximumAttackDistance)
         {
             string state = ("EnemyAttack");
             e.GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, chasedPlayer);

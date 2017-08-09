@@ -17,7 +17,6 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public bool dead;
     [System.NonSerialized]
     public GameObject spawnedBy;
-
     [Space(15)]
 
     public Transform currentWaypoint;
@@ -49,7 +48,8 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
     public List<GameObject> effectsForBossShot;
     public List<GameObject> effectsForBossDrop;
 
-    
+    [System.NonSerialized]
+    public bool waitBeforeAttack = false;
 
     private void Start()
     {
@@ -190,5 +190,19 @@ public class EnemyController : StatefulMonoBehaviour<EnemyController>
         yield return new WaitForSeconds(waitTime);
         string newState = (state);
         GetComponent<NetworkEnemyManager>().ProxyCommandChangeState(state, gameObject);
+    }
+
+    public void StartWaitForAttack()
+    {
+        StartCoroutine(WaitBeforeAttackWaiter());
+    }
+    /// <summary>
+    /// Has to wait before it can change to the attack state, otherweise it would attack immediately
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator WaitBeforeAttackWaiter()
+    {
+        yield return new WaitForSeconds(2);
+        waitBeforeAttack = true;
     }
 }

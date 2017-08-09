@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// A shot that shoots three times as fast as the normal shot
+/// </summary>
 public class FastShot : NormalShot
 {
 
@@ -11,11 +14,18 @@ public class FastShot : NormalShot
     [SerializeField]
     private float waitTime = 0.01f;
 
+    /// <summary>
+    /// three shots are spawned instantly but get their initial speed after a waitTime
+    /// </summary>
     void Start()
     {
         StartCoroutine(WaitBetweenShots(waitTime));
     }
 
+    /// <summary>
+    /// Since the shot prefab itself does not collide with the enemy, this method handles the point when the enemy is hit by a projectile and gives Damage, spawns effects and sets the tage damage trigger
+    /// </summary>
+    /// <param name="collision"></param>
     public void Collide(Collision collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -44,12 +54,13 @@ public class FastShot : NormalShot
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(shotDamage, player);
         }
-        if (collision.gameObject.tag == "Player")
-        {
-            collision.gameObject.GetComponent<NetworkPlayerHealth>().ReceiveDamage(shotDamage);
-        }
     }
 
+    /// <summary>
+    /// Waits to give initial speedup to the three projectiles.
+    /// </summary>
+    /// <param name="waitTime"></param>
+    /// <returns></returns>
     IEnumerator WaitBetweenShots(float waitTime)
     {
         foreach (GameObject shot in shots)

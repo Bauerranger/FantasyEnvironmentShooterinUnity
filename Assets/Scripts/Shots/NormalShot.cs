@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-
+/// <summary>
+/// Standard shot for the player and enemy
+/// </summary>
 public class NormalShot : ShotBase
 {
     public int shotDamage = 25;
@@ -12,12 +14,21 @@ public class NormalShot : ShotBase
     public List<GameObject> hitPlayerAnimations = new List<GameObject>();
     public Rigidbody shotRigidbody;
 
+    /// <summary>
+    /// shot gets shot in its initial direction
+    /// </summary>
     void Start()
     {
         shotRigidbody = GetComponent<Rigidbody>();
         shotRigidbody.AddForce(transform.forward * FireForce);
     }
 
+
+    /// <summary>
+    /// Gives different animations depending it it is a player, enemy or the environment.
+    /// Calls the damage methods in the corrisponding scripts.
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -59,10 +70,5 @@ public class NormalShot : ShotBase
         {
             collision.gameObject.GetComponent<NetworkPlayerHealth>().ReceiveDamage(shotDamage);
         }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        Destroy(this.gameObject);
     }
 }
